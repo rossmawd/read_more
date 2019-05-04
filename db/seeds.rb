@@ -26,5 +26,5 @@ User_Book.create(user_id: 2, book_id: 1, read_status: "Abandoned", page_number: 
 User_Book.create(user_id: 3, book_id: 3, read_status: "Completed", page_number: 200, rating: 2, review: "It sucks")
 User_Book.create(user_id: 4, book_id: 4, read_status: "Not Started", page_number: nil, rating: nil, review: nil)
 User_Book.create(user_id: 1, book_id: 5, read_status: "Reading", page_number: 33, rating: 5, review: "Amazing")
-User_Book.create(user_id: 5, book_id: 2, read_status: "Reading", page_number: 55, rating: 3, review: "So far OK")
+User_Book.create(user_id: 5, book_id: 2, read_status: "Reading", page_number: 55, rating: 4, review: "So far OK")
 User_Book.create(user_id: 3, book_id: 2, read_status: "Completed", page_number: 355, rating: 4, review: "Nice")
