@@ -5,6 +5,57 @@ class User < ActiveRecord::Base
     has_many :authors, through: :books
     has_many :books, through: :user_books
 
+    working_user = nil
+
+  def check_user
+    # Will check if username already exsists and ask for password or will create a new user.
+    if User.find_by(name: username)
+      user = User.find_by(name: username)
+      puts "Hello #{user.first_name} #{user.last_name}."
+      self.enter_password
+    else
+      puts "Hello #{username}, lets get started creating you a new profile."
+      self.create_new_account
+    end
+  end
+
+  def enter_password
+    # Gets password from user
+    puts "Please enter your password: "
+    password = gets.chomp
+    if self.password == password
+      working_user = self
+      puts "Welcome back!"
+    else puts "Sorry that password does not match our records, please try again: "
+      self.enter_password
+    end
+  end
+
+  def create_new_account
+    # Will create a new user and save to the database
+    username = self
+    if !User.find_by(name: username)
+      puts "Unfortunatly that username is taken, please enter a different one."
+      self.create_new_account
+    else
+      user = User.create(name: username)
+      puts "#{username} is free!"
+      self.create_and_check_password
+    end
+  end
+
+  def create_and_check_password
+    # Takes the string argument and saves as the password
+    puts "Now please choose a password."
+    password = gets.chomp
+    if password.length >= 5
+      self.password = password
+      self.save
+    else puts "Your password must be at least 5 characters long."
+      self.create_new_account
+    end
+  end
+
   def books
     # Returns book object of all books said user has created
     Book.all.select{|book| book.user.id == self.id}
@@ -22,12 +73,35 @@ class User < ActiveRecord::Base
 
   def borrowed_books
     # Returns book object of all books said user has borrowed
-    answer = self.reviewed_books-self.books
-    answer.map{|answers| answers.book}
+    self.reviewed_books-self.books
   end
 
   def borrowed_books_names
     self.borrowed_books.map{|books| books.name}.join
+  end
+
+  def sort_by_rating
+    User_Book.rating_desc.select{|userbook| userbook.user == self}
+  end
+
+  def completed?
+    User_Book.completed?.select{|userbook| userbook.user_id == self.id}
+  end
+
+  def not_started
+    User_Book.not_started.select{|userbook| userbook.user_id == self.id}
+  end
+
+  def abandoned
+    User_Book.abandoned.select{|userbook| userbook.user_id == self.id}
+  end
+
+  def reading
+    User_Book.reading.select{|userbook| userbook.user_id == self.id}
+  end
+
+  def must_return
+    self.borrowed_books-User_Book.possession_mine
   end
 
   def self.update_id
