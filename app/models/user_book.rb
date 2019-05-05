@@ -32,12 +32,15 @@ class User_Book < ActiveRecord::Base
       self.all.select{|userbook| userbook.read_status == "Reading"}
     end
 
-    def self.reading_mine
-      self.all.select{|userbook| userbook.reading.user.id == user.id}
+    def self.possession_mine
+      # Returns all user_book objects where the book is held by reviewer
+      self.all.select{|userbook| userbook.possession == "On The Shelf"}
     end
 
-
-
+    def self.possession_others
+      # Returns all user_book objects where the book is not held by reviewer
+      self.all.select{|userbook| userbook.possession == "Off The Shelf"}
+    end
 
     def self.update_id
       # Updates all user_books ID's
