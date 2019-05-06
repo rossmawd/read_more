@@ -73,17 +73,19 @@ class User < ActiveRecord::Base
 
   def borrowed_books
     # Returns book object of all books said user has borrowed
-    self.reviewed_books-self.books
+    self.reviewed_books - self.books
   end
 
-  def borrowed_books_names
+  def borrowed_books_names 
     self.borrowed_books.map{|books| books.name}.join
-  end
+  end                                        
 
+  #returns user's User_Book instances with ratings in decending order
   def sort_by_rating
     User_Book.rating_desc.select{|userbook| userbook.user == self}
   end
 
+  #returns user's User_Book instances where user has complted the book
   def completed?
     User_Book.completed?.select{|userbook| userbook.user_id == self.id}
   end
@@ -101,7 +103,7 @@ class User < ActiveRecord::Base
   end
 
   def must_return
-    self.borrowed_books-User_Book.possession_mine
+    self.borrowed_books - User_Book.possession_mine
   end
 
   def self.update_id
