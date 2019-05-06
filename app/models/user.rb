@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 
     working_user = nil
 
+<<<<<<< HEAD
   # def check_user
   #   # Will check if username already exsists and ask for password or will create a new user.
   #   if User.find_by(name: self)
@@ -21,6 +22,9 @@ class User < ActiveRecord::Base
 
 
   def self.check_user(username)
+=======
+  def self.check_user
+>>>>>>> lauren
     # Will check if username already exsists and ask for password or will create a new user.
     if User.find_by(user_name: username)
       user = User.find_by(user_name: username)
