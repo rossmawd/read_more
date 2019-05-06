@@ -5,11 +5,7 @@ class Book < ActiveRecord::Base
   belongs_to :author
   belongs_to :genre
 
-  #Returns User instance of the owner of the book
-  # def owner
-  #   User.all.select {|user| user.id == self.user_id}
-  # end
-
+  
   #HELPER: sort all Author instances by FIRSTname alphabetically
   def self.all_authors_sorted
     Author.all.order(:first_name)
