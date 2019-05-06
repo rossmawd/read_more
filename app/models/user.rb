@@ -7,28 +7,7 @@ class User < ActiveRecord::Base
 
     working_user = nil
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  # def check_user
-  #   # Will check if username already exsists and ask for password or will create a new user.
-  #   if User.find_by(name: self)
-  #     user = User.find_by(name: self)
-  #     puts "Hello #{user.first_name} #{user.last_name}."
-  #     self.enter_password
-  #   else
-  #     puts "Hello #{self}, lets get started creating you a new profile."
-  #     self.create_new_account
-  #   end
-  # end
-
-
   def self.check_user(username)
-=======
-  def self.check_user
->>>>>>> lauren
-=======
-  def self.check_user(username)
->>>>>>> lauren
     # Will check if username already exsists and ask for password or will create a new user.
     if User.find_by(user_name: username)
       user = User.find_by(user_name: username)
