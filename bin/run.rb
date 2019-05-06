@@ -8,4 +8,4 @@ prompt.ask("Please enter your username to login or create a new account")
 
 username = gets.chomp
 
-username.check_user
+User.check_user(username)
