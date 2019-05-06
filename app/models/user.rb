@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
     working_user = nil
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   # def check_user
   #   # Will check if username already exsists and ask for password or will create a new user.
   #   if User.find_by(name: self)
@@ -25,14 +26,17 @@ class User < ActiveRecord::Base
 =======
   def self.check_user
 >>>>>>> lauren
+=======
+  def self.check_user(username)
+>>>>>>> lauren
     # Will check if username already exsists and ask for password or will create a new user.
     if User.find_by(user_name: username)
       user = User.find_by(user_name: username)
       puts "Hello #{user.first_name} #{user.last_name}."
-      self.enter_password
+      user.enter_password
     else
       puts "Hello #{username}, lets get started creating you a new profile."
-      self.create_new_account
+      self.create_new_account(username)
     end
   end
 
@@ -49,20 +53,19 @@ class User < ActiveRecord::Base
     end
   end
 
-  def create_new_account
+  def self.create_new_account(username)
     # Will create a new user and save to the database
-    username = self
-    if !User.find_by(name: username)
+    if !User.find_by(user_name: username)
       puts "Unfortunatly that username is taken, please enter a different one."
       self.create_new_account
     else
-      user = User.create(name: username)
+      user = User.create(user_name: username)
       puts "#{username} is free!"
-      self.create_and_check_password
+      self.create_and_check_password(username)
     end
   end
 
-  def create_and_check_password
+  def self.create_and_check_password(username)
     # Takes the string argument and saves as the password
     prompt.mask("Now please choose a password.")
     password = gets.chomp
