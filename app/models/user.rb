@@ -19,7 +19,6 @@ class User < ActiveRecord::Base
     end
   end
 
-
   def enter_password
     # Gets password from user
     prompt.mask("Please enter your password: ")
@@ -98,10 +97,12 @@ class User < ActiveRecord::Base
     User_Book.abandoned.select{|userbook| userbook.user_id == self.id}
   end
 
+  #returns users books with 'Reading' status
   def reading
     User_Book.reading.select{|userbook| userbook.user_id == self.id}
   end
 
+  #books that 
   def must_return
     self.borrowed_books - User_Book.possession_mine
   end
