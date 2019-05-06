@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
 
   def enter_password
     # Gets password from user
-    puts "Please enter your password: "
+    prompt.mask("Please enter your password: ")
     password = gets.chomp
     if self.password == password
       working_user = self
@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
 
   def create_and_check_password
     # Takes the string argument and saves as the password
-    puts "Now please choose a password."
+    prompt.mask("Now please choose a password.")
     password = gets.chomp
     if password.length >= 5
       self.password = password
