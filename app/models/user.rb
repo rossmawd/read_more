@@ -61,7 +61,55 @@ class User < ActiveRecord::Base
       Current Location: #{possession}"
     end
     counter += 1
+  def books_by_name
+    self.books.map{|books| books.name}
   end
+
+  def view_books
+    prompt = TTY::Prompt.new
+    array = self.books
+    choices = (array.to_s.gsub(/\"/, '\'').gsub(/[\[\]]/, ''))
+    prompt.enum_select("Select a Book to Read More:", choices)
+    # puts self.books
+    # puts "Displaying all current users books!!"
+  end
+
+  # def books_names
+  #
+  #   title = ""
+  #   synops = ""
+  #   author = ""
+  #   rating = ""
+  #   review = ""
+  #   ownership = ""
+  #   read_stat = ""
+  #   page = ""
+  #
+  #   counter = 0
+  #
+  #   while self.books.length < counter do
+  #   Book.all.each do |book|
+  #       title = book.name
+  #       synops = book.synopsis
+  #       author = book.author
+  #     end
+  #     User_Book.all.each do |userbook|
+  #       rating = userbook.rating
+  #       review = userbook.review
+  #       ownership = userbook.possession
+  #       read_stat = userbook.read_status
+  #       page = userbook.page_number
+  #     end
+  #     puts "Book #{counter +1}:\n
+  #     Title: #{title}\n
+  #     Synopsis: #{synops}\n
+  #     Rating: #{rating}\n
+  #     Review: #{review}\n
+  #     Status: #{read_stat} - Page Number: #{page}\n
+  #     Current Location: #{ownership}"
+  #     counter +=1
+  #   end
+  # end
 
   def reviews
     # Returns user_book (review) object of all books said user has reviewed
@@ -79,7 +127,7 @@ class User < ActiveRecord::Base
   end
 
   def borrowed_books_names
-    self.borrowed_books.map{|books| books.name}.join
+    self.borrowed_books.map{|books| books.name}.join(", ")
   end
 
   def sort_by_rating
