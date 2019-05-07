@@ -113,4 +113,9 @@ class User < ActiveRecord::Base
       users.save
     end
   end
+
+  ####Ross's Methods Below!
+
+  
+
 end
