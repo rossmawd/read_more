@@ -42,24 +42,8 @@ class User < ActiveRecord::Base
     Book.all.select{|book| book.user.id == self.id}
   end
 
-  def books_names
-    names = ""
-    syns = ""
-    array = []
   def my_books_list
     counter = 0
-    while self.books.length > array.length
-      title = Book.all[counter].name
-      synops = Book.all[counter].synopsis
-      rating = User_Book.all[counter].rating
-      review = User_Book.all[counter].review
-      ownership = User_Book.all[counter].possession
-      puts "Book #{counter + 1}:\n
-      Title: #{title}\n
-      Synopsis: #{synops}\n
-      Rating: #{rating}\n
-      Review: #{review}\n
-      Current Location: #{possession}"
     while self.books.length > counter
       puts "Book #{counter + 1}
       Title: #{self.books[counter].name}
@@ -70,58 +54,10 @@ class User < ActiveRecord::Base
       Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
     end
-    counter += 1
-  def books_by_name
-    self.books.map{|books| books.name}
     sleep 1
     books_names_inner_menu
   end
 
-  def view_books
-    prompt = TTY::Prompt.new
-    array = self.books
-    choices = (array.to_s.gsub(/\"/, '\'').gsub(/[\[\]]/, ''))
-    prompt.enum_select("Select a Book to Read More:", choices)
-    # puts self.books
-    # puts "Displaying all current users books!!"
-  end
-
-  # def books_names
-  #
-  #   title = ""
-  #   synops = ""
-  #   author = ""
-  #   rating = ""
-  #   review = ""
-  #   ownership = ""
-  #   read_stat = ""
-  #   page = ""
-  #
-  #   counter = 0
-  #
-  #   while self.books.length < counter do
-  #   Book.all.each do |book|
-  #       title = book.name
-  #       synops = book.synopsis
-  #       author = book.author
-  #     end
-  #     User_Book.all.each do |userbook|
-  #       rating = userbook.rating
-  #       review = userbook.review
-  #       ownership = userbook.possession
-  #       read_stat = userbook.read_status
-  #       page = userbook.page_number
-  #     end
-  #     puts "Book #{counter +1}:\n
-  #     Title: #{title}\n
-  #     Synopsis: #{synops}\n
-  #     Rating: #{rating}\n
-  #     Review: #{review}\n
-  #     Status: #{read_stat} - Page Number: #{page}\n
-  #     Current Location: #{ownership}"
-  #     counter +=1
-  #   end
-  # end
   def my_borrowed_books_list
     counter = 0
     while self.borrowed_books.length > counter
@@ -135,7 +71,7 @@ class User < ActiveRecord::Base
       counter += 1
     end
     sleep 1
-     books_names_inner_menu
+    books_names_inner_menu
   end
 
   def books_by_title_only
@@ -200,6 +136,5 @@ class User < ActiveRecord::Base
 
   ####Ross's Methods Below!
 
-  
 
 end
