@@ -117,6 +117,7 @@ def main_menu
 
    case selection
    when '📚  View Books'
+       my_books_list
      when '📚  View Borrowed Books'
        my_borrowed_books_list
      when '📚  Add a New Book'
@@ -181,13 +182,4 @@ def internal_menu
        when '❌  Exit'
          exit
      end
-end
-
-def view_books
-  puts self.books
-  puts "Displaying all current users books!!"
-  choices = (Book.all.select{|book| book.user.id == self.id}.join)
-  prompt.enum_select("Select a Book to Read More:", choices)
-  # puts self.books
-  # puts "Displaying all current users books!!"
 end
