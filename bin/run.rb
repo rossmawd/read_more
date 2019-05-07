@@ -1,6 +1,5 @@
 require_relative '../config/environment'
 require_relative './command_line_interface'
-#require_relative './APIAccessor'             #REMOVE!!
 
 prompt = TTY::Prompt.new
 font = TTY::Font.new(:standard)
