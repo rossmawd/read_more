@@ -3,8 +3,11 @@ class Book < ActiveRecord::Base
   has_many :users, through: :user_books
   belongs_to :user
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   #belongs_to :author
+>>>>>>> add_new_book_methods_to_book
+=======
 >>>>>>> add_new_book_methods_to_book
   belongs_to :genre
 
