@@ -16,10 +16,10 @@ puts " "               #better way for entering blank lines??
 
  puts "Books found!"
 
- # Displays the title, author, publishedDate for the top 3? results 
+ # Displays the title, author, publishedDate for the top 3? results
  i = 0
  3.times do
-   
+
     puts "Book #{i+1}"
     puts "Title: #{book_search_results["items"][i]["volumeInfo"]["title"]}\n"
     puts "Author(s): #{book_search_results["items"][i]["volumeInfo"]["authors"].join(", ")}"
@@ -37,7 +37,7 @@ puts " "               #better way for entering blank lines??
 
 
  #  book["volumeInfo"].each do |volInfo|
-     
+
  #   binding.pry
       #title = RestClient.get(volInfo)
       #title_hash = JSON.parse(title)
