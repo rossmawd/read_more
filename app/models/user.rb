@@ -43,6 +43,16 @@ class User < ActiveRecord::Base
     Book.all.select{|book| book.user.id == self.id}
   end
 
+  def books_names
+    names = ""
+    syns = ""
+    self.books.map do |book|
+      puts "Title: #{book.name}
+Synopsis: #{book.synopsis}\n
+"
+    end
+  end
+
   def reviews
     # Returns user_book (review) object of all books said user has reviewed
     User_Book.all.select{|userbook| userbook.user_id == self.id}
