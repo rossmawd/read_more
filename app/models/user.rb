@@ -46,11 +46,22 @@ class User < ActiveRecord::Base
   def books_names
     names = ""
     syns = ""
-    self.books.map do |book|
-      puts "Title: #{book.name}
-Synopsis: #{book.synopsis}\n
-"
+    array = []
+    counter = 0
+    while self.books.length > array.length
+      title = Book.all[counter].name
+      synops = Book.all[counter].synopsis
+      rating = User_Book.all[counter].rating
+      review = User_Book.all[counter].review
+      ownership = User_Book.all[counter].possession
+      puts "Book #{counter + 1}:\n
+      Title: #{title}\n
+      Synopsis: #{synops}\n
+      Rating: #{rating}\n
+      Review: #{review}\n
+      Current Location: #{possession}"
     end
+    counter += 1
   end
 
   def reviews
