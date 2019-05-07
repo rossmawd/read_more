@@ -67,6 +67,8 @@ def create_account
       user.update_user(firstname, lastname, e_mail, age)
 ### Confirm details with a recap and yes of no question
       user = User.last
+
+      main_menu
    else
       puts "That name is taken. Please choose another one."
       create_account
@@ -115,9 +117,8 @@ def main_menu
 
    case selection
    when '📚  View Books'
-       view_books
-     when '📚  Borrowed Books'
-       borrowed_books
+     when '📚  View Borrowed Books'
+       my_borrowed_books_list
      when '📚  Add a New Book'
        borrowed_books
      when '📚  Review a Book'
@@ -126,6 +127,39 @@ def main_menu
        exit
    end
 end
+
+#######################
+
+def books_names_inner_menu
+  prompt = TTY::Prompt.new
+
+  selection = prompt.select("Where to next?") do |a|
+     a.choice '📚  Select Book to See More'
+     a.choice '📚  Edit a Book'
+     a.choice '📚  Review a Book'
+     a.choice '📚  Main Menu'
+     a.choice ''
+     a.choice '❌  Exit'
+   end
+
+   case selection
+   when '📚  Select Book to See More'
+       puts "See more about selected book, write a method to select book by number and shoe said book"
+       main_menu
+     when '📚  Edit a Book'
+       puts "Write a method to ask for book number and edit said book"
+       main_menu
+     when '📚  Review a Book'
+       puts "Write a method to ask for book number and review said book"
+       main_menu
+     when '📚  Main Menu'
+       main_menu
+     when '❌  Exit'
+       exit
+   end
+ end
+
+############################
 
 def internal_menu
     prompt = TTY::Prompt.new

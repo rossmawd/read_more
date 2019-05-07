@@ -46,6 +46,7 @@ class User < ActiveRecord::Base
     names = ""
     syns = ""
     array = []
+  def my_books_list
     counter = 0
     while self.books.length > array.length
       title = Book.all[counter].name
@@ -59,10 +60,21 @@ class User < ActiveRecord::Base
       Rating: #{rating}\n
       Review: #{review}\n
       Current Location: #{possession}"
+    while self.books.length > counter
+      puts "Book #{counter + 1}
+      Title: #{self.books[counter].name}
+      Author: #{self.books[counter].author}
+      Synopsis: #{self.books[counter].synopsis}
+      My Rating: #{self.reviews[counter].rating}
+      My Review: #{self.reviews[counter].review}
+      Current Location: #{self.reviews[counter].possession}\n"
+      counter += 1
     end
     counter += 1
   def books_by_name
     self.books.map{|books| books.name}
+    sleep 1
+    books_names_inner_menu
   end
 
   def view_books
@@ -110,6 +122,25 @@ class User < ActiveRecord::Base
   #     counter +=1
   #   end
   # end
+  def my_borrowed_books_list
+    counter = 0
+    while self.borrowed_books.length > counter
+      puts "Book #{counter + 1}
+      Title: #{self.borrowed_books[counter].name}
+      Author: #{self.borrowed_books[counter].author}
+      Synopsis: #{self.borrowed_books[counter].synopsis}
+      My Rating: #{self.borrowed_book_reviews[counter].rating}
+      My Review: #{self.borrowed_book_reviews[counter].review}
+      Current Location: #{self.borrowed_book_reviews[counter].possession}\n"
+      counter += 1
+    end
+    sleep 1
+     books_names_inner_menu
+  end
+
+  def books_by_title_only
+    self.books.map{|books| books.name}
+  end
 
   def reviews
     # Returns user_book (review) object of all books said user has reviewed
@@ -124,6 +155,11 @@ class User < ActiveRecord::Base
   def borrowed_books
     # Returns book object of all books said user has borrowed
     self.reviewed_books-self.books
+  end
+
+  def borrowed_book_reviews
+    # Returns user_book object of all books said user has borrowed
+    User_Book.all.select{|userbook| userbook.user_id == self.id && userbook.book.user_id != self.id}
   end
 
   def borrowed_books_names
