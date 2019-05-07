@@ -43,6 +43,27 @@ class User < ActiveRecord::Base
     Book.all.select{|book| book.user.id == self.id}
   end
 
+  def books_names
+    names = ""
+    syns = ""
+    array = []
+    counter = 0
+    while self.books.length > array.length
+      title = Book.all[counter].name
+      synops = Book.all[counter].synopsis
+      rating = User_Book.all[counter].rating
+      review = User_Book.all[counter].review
+      ownership = User_Book.all[counter].possession
+      puts "Book #{counter + 1}:\n
+      Title: #{title}\n
+      Synopsis: #{synops}\n
+      Rating: #{rating}\n
+      Review: #{review}\n
+      Current Location: #{possession}"
+    end
+    counter += 1
+  end
+
   def reviews
     # Returns user_book (review) object of all books said user has reviewed
     User_Book.all.select{|userbook| userbook.user_id == self.id}
