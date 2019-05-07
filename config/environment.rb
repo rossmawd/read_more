@@ -108,5 +108,29 @@ def create_account
 #################
 
 def main_menu(user)
-  puts "This is your main menu"
+  puts "Welcome Back inside your own personally library."
+
+  prompt = TTY::Prompt.new
+  selection = prompt.select("Where to next?") do |a|
+     a.choice '📚  View Books'
+     a.choice '📚  View Borrowed Books'
+     a.choice '📚  Add a New Book'
+     a.choice '📚  Add a New Review'
+     a.choice ''
+     a.choice '❌  Exit'
+   end
+
+   case selection
+   when '📚  View Books'
+       self.books
+     when '📚  Borrowed Books'
+       self.borrowed_books
+     when '📚  Add a New Book'
+       self.borrowed_books
+     when '📚  Add a New Review'
+       self.borrowed_books
+     when '❌  Exit'
+       exit
+   end
+
 end

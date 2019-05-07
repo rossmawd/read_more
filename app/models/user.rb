@@ -23,11 +23,11 @@ class User < ActiveRecord::Base
     else
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
-        a.choice 'Back to Main Menu'
+        a.choice 'Back to the Start Menu'
       end
       if selection == 'Try Again'
         check_password
-      elsif selection == 'Back to Main Menu'
+      elsif selection == 'Back to the Start Menu'
         start_menu
       end
     end
