@@ -19,15 +19,15 @@ class User < ActiveRecord::Base
     if password == self.password
       puts "Welcome Back!"
       user = self
-      return main_menu(user)
+      main_menu
     else
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
         a.choice 'Back to the Start Menu'
       end
-      if selection == 'Try Again'
+      if choice == 'Try Again'
         check_password
-      elsif selection == 'Back to the Start Menu'
+      elsif choice == 'Back to the Start Menu'
         start_menu
       end
     end
