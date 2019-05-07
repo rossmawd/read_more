@@ -1,5 +1,12 @@
 class Genre < ActiveRecord::Base
     has_many :books
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    #has_many :authors, through: :books
+>>>>>>> add_new_book_methods_to_book
+=======
+>>>>>>> add_new_book_methods_to_book
     has_many :users, through: :books
 
     def self.update_id
