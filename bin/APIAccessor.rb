@@ -43,7 +43,11 @@ puts " "               #better way for entering blank lines??
 def add_new_book_from_api(choice, user_id, book_search_results)
   index = choice - 1
   if !add_or_find_author_id(choice, book_search_results)
-    Book.create(name: book_search_results["items"][index]["volumeInfo"]["title"], synopsis: book_search_results["items"][index]["volumeInfo"]["description"], user_id: user_id)
+    Book.create(
+      name: book_search_results["items"][index]["volumeInfo"]["title"], 
+      synopsis: book_search_results["items"][index]["volumeInfo"]["description"], 
+      user_id: user_id,
+      )
   end
  #Book.create(name: "Harry Potter", synopsis: "about a wizard", user_id: 4, author_id: 4, genre_id: 3)
 end
