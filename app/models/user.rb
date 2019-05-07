@@ -1,61 +1,37 @@
 class User < ActiveRecord::Base
-    has_many :books
-    has_many :user_books
-    has_many :genres, through: :books
-    has_many :authors, through: :books
-    has_many :books, through: :user_books
+  has_many :books
+  has_many :user_books
+  has_many :genres, through: :books
+  has_many :authors, through: :books
+  has_many :books, through: :user_books
 
-    working_user = nil
+  def update_password(password)
+    self.update(password: password)
+  end
 
+  def update_user(firstname, lastname, e_mail, age)
+    self.update(first_name: firstname, last_name: lastname, email: e_mail, age: age)
+  end
 
-    def self.check_user(username)
-      # Will check if username already exsists and ask for password or will create a new user.
-      if User.find_by(user_name: username)
-        user = User.find_by(user_name: username)
-        puts "Hello #{user.first_name} #{user.last_name}."
-        user.enter_password(user)
-      else
-        puts "Hello #{username}, lets get started creating you a new profile."
-        self.create_new_account(username)
+  def check_password
+    prompt = TTY::Prompt.new
+    password = prompt.mask('🔐   Please enter your password: ')
+    if password == self.password
+      puts "Welcome Back!"
+      user = self
+      return main_menu(user)
+    else
+      choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
+        a.choice 'Try Again'
+        a.choice 'Back to the Start Menu'
+      end
+      if selection == 'Try Again'
+        check_password
+      elsif selection == 'Back to the Start Menu'
+        start_menu
       end
     end
-
-    def enter_password(user)
-      # Gets password from user
-      puts "Please enter your password: "
-      password = gets.chomp
-      if self.password == password
-        working_user = self
-        puts "Welcome back!"
-      else puts "Sorry that password does not match our records, please enter your username to try again: "
-        self.check_user(username)
-      end
-    end
-
-    def self.create_new_account(username)
-      # Will create a new user and save to the database
-      if User.users.include?(username)
-        puts "Unfortunatly that username is taken, please enter a different one."
-        username = gets.chomp
-        self.create_new_account(username)
-      else
-        user = User.create(user_name: username)
-        puts "#{username} is free!"
-        self.create_and_check_password(username)
-      end
-    end
-
-    def self.create_and_check_password(username)
-    # Takes the string argument and saves as the password
-    puts "Now please choose a password."
-    password = gets.chomp
-    if password.length >= 5
-      self.password = password
-      self.save
-    else puts "Your password must be at least 5 characters long."
-      self.create_and_check_password(username)
-    end
-    end
+  end
 
   def self.users
     # List all users.
@@ -79,19 +55,17 @@ class User < ActiveRecord::Base
 
   def borrowed_books
     # Returns book object of all books said user has borrowed
-    self.reviewed_books - self.books
+    self.reviewed_books-self.books
   end
 
-  def borrowed_books_names 
+  def borrowed_books_names
     self.borrowed_books.map{|books| books.name}.join
-  end                                        
+  end
 
-  #returns user's User_Book instances with ratings in decending order
   def sort_by_rating
     User_Book.rating_desc.select{|userbook| userbook.user == self}
   end
 
-  #returns user's User_Book instances where user has complted the book
   def completed?
     User_Book.completed?.select{|userbook| userbook.user_id == self.id}
   end
@@ -104,14 +78,12 @@ class User < ActiveRecord::Base
     User_Book.abandoned.select{|userbook| userbook.user_id == self.id}
   end
 
-  #returns users books with 'Reading' status
   def reading
     User_Book.reading.select{|userbook| userbook.user_id == self.id}
   end
 
-  #books that 
   def must_return
-    self.borrowed_books - User_Book.possession_mine
+    self.borrowed_books-User_Book.possession_mine
   end
 
   def self.update_id
