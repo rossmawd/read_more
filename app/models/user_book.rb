@@ -33,7 +33,7 @@ class User_Book < ActiveRecord::Base
   end
 
   def self.possession_mine
-    # Returns all user_book objects where the book is held by reviewer
+    # Returns all user_book objects where the book is held by reviewer (userbook user)
     self.all.select{|userbook| userbook.possession == "On The Shelf"}
   end
 
