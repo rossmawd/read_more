@@ -18,5 +18,8 @@ User_Book.create(user_id: 5, book_id: 2, read_status: "Reading", page_number: 55
 User_Book.create(user_id: 3, book_id: 2, read_status: "Completed", page_number: 355, rating: 4, review: "Nice", possession: "Off The Shelf")
 
 
+
+
 Book.create(name: "1 - Laurens Book", synopsis: "1 - Laurens Synopsis", author: "1 - Laurens Author", user_id: 6, genre: "Drama", isbn_13: 2809358195724)
 User_Book.create(user_id: 6, read_status: "Completed", page_number: 732, rating: 5, review: "AMAZING!!!", possession: "On The Shelf", book_id: 6,)
+

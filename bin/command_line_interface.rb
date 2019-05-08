@@ -162,6 +162,7 @@ def books_names_inner_menu
 
 ############################
 
+
 def internal_menu
     prompt = TTY::Prompt.new
     selection = prompt.select("Where to next?") do |a|
