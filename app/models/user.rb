@@ -39,7 +39,8 @@ class User < ActiveRecord::Base
 
   def books
     # Returns book object of all books said user has created
-    Book.all.select{|book| book.user.id == self.id}
+    Book.all.select{|book| book.user_id == self.id}
+
   end
 
   def my_books_list
@@ -142,7 +143,7 @@ class User < ActiveRecord::Base
     puts "The more that you read, the more things you will know. The more that you learn, the more places you’ll go. – Dr. Seuss"
     sleep 0.5
 
-    prompt.collect do
+    answers = prompt.collect do
       key(:book_name).ask('Title: ')
       key(:book_synopsis).ask('Synopsis: ')
       key(:book_author).ask('Author: ')
@@ -150,7 +151,7 @@ class User < ActiveRecord::Base
     end
 
     user = self
-    book = Book.create(name: book_name, synopsis: book_synopsis, author: book_author, user_id: user, isbn_13: book_isbn)
+    book = Book.create(name: answers[:book_name], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
 
     selection = prompt.select("Where to next?") do |a|
        a.choice '📚  Review This Book'
