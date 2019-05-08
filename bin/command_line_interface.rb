@@ -121,9 +121,11 @@ def main_menu
      when '📚  View Borrowed Books'
        my_borrowed_books_list
      when '📚  Add a New Book'
-       borrowed_books
+       puts "This is where you will be able to add a new book to your library"
+       main_menu
      when '📚  Review a Book'
-       borrowed_books
+       puts "This is where you will be able to review a new book"
+       main_menu
      when '❌  Exit'
        exit
    end
