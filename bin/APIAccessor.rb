@@ -5,36 +5,41 @@ require_relative '../config/environment'   #Ross added this
 
 #####BELOW: the CLI for Entering A book using the API
 
-puts "Welcome to Google Books API "
-puts "Please enter a book title 📚"
-answer = gets.chomp
+def get_input_and_search_api
+  puts "Welcome to Google Books API "
+  puts "Please enter a book title 📚"
+  answer = gets.chomp
 
-puts 
-puts "Thanks! Searching for book... 🔍"
-puts               #is there a better way for entering blank lines??
+  puts 
+  puts "Thanks! Searching for book... 🔍"
+  puts               #is there a better way for entering blank lines??
 
-result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
+  result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
 
-book_search_results = JSON.parse(result)
+  book_search_results = JSON.parse(result)
 
-puts "Books found! 😀  Here are the top 3:"
+  puts "Books found! 😀  Here are the top 3:"
+  book_search_results
+end
+
+api_result = get_input_and_search_api
  
  # Displays the title, author, publishedDate for the top 3? results  
- def display_three_books(i, book_search_results)
+def display_three_books(i, api_result)
   3.times do
       puts "Book #{i+1}"
-      puts "Title: #{book_search_results["items"][i]["volumeInfo"]["title"]}\n"
+      puts "Title: #{api_result["items"][i]["volumeInfo"]["title"]}\n"
       #BELOW 3 lines to adjust for the key 'authors' not always existing
-      authors = book_search_results["items"][i]["volumeInfo"]["authors"]
+      authors = api_result["items"][i]["volumeInfo"]["authors"]
       authors == nil ? output = nil : output = authors.join(", ")
       puts "Author: #{output}"
-      puts "Date Published: #{book_search_results["items"][i]["volumeInfo"]["publishedDate"]}"
+      puts "Date Published: #{api_result["items"][i]["volumeInfo"]["publishedDate"]}"
       puts
       i += 1
   end
 end
 
-display_three_books(0, book_search_results) 
+display_three_books(0, api_result) 
 
 menu = TTY::Prompt.new
  
@@ -50,14 +55,13 @@ case selection
   when '📚  See the next 3 books'
     bool = true
     while bool
-      more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n" : "Here are the next three:\n"
+      more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
       puts more_than_nine
       if i >= 9 then break end
-      display_three_books(i, book_search_results)
-      
+
+      display_three_books(i, api_result)
       book_loop = TTY::Prompt.new
       bool = book_loop.yes?('Would you like to see more?')
-      #binding.pry
       i += 3
     end
   
@@ -74,19 +78,19 @@ end
   choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
 
   #HELPER:not every book has 'authors'
-  def check_if_authors_key_exists(index, book_search_results)
-    authors = book_search_results["items"][index]["volumeInfo"]["authors"]
+  def check_if_authors_key_exists(index, api_result)
+    authors = api_result["items"][index]["volumeInfo"]["authors"]
     authors == nil ? output = nil : output = authors.join(", ")
     output
   end
 
   #HELPER find's if the book has ISBN_13, else nil
-  def find_isbn_13(index, book_search_results)
-    length = book_search_results["items"][index]["volumeInfo"]["industryIdentifiers"].length
+  def find_isbn_13(index, api_result)
+    length = api_result["items"][index]["volumeInfo"]["industryIdentifiers"].length
     i = 0
     isbn = 0
     length.times {
-      isbn_hash = book_search_results["items"][index]["volumeInfo"]["industryIdentifiers"][i]
+      isbn_hash = api_result["items"][index]["volumeInfo"]["industryIdentifiers"][i]
       if isbn_hash.value?("ISBN_13")
         isbn = isbn_hash["identifier"]
         break
@@ -99,22 +103,22 @@ end
     isbn
   end
 
-  def add_new_book_from_api(choice, user_id, book_search_results)
+  def add_new_book_from_api(choice, user_id, api_result)
     index = choice - 1
 
     #Below searhes ALL books, need to specify only the user's books (Once I move this into the User class):
-  if Book.all.find_by(isbn_13: book_search_results["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
+  if Book.all.find_by(isbn_13: api_result["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
       Book.create(
-        name: book_search_results["items"][index]["volumeInfo"]["title"], 
-        synopsis: book_search_results["items"][index]["volumeInfo"]["description"], 
+        name: api_result["items"][index]["volumeInfo"]["title"], 
+        synopsis: api_result["items"][index]["volumeInfo"]["description"], 
         user_id: user_id, 
-        author: check_if_authors_key_exists(index, book_search_results), 
-        isbn_13: find_isbn_13(index, book_search_results)
+        author: check_if_authors_key_exists(index, api_result), 
+        isbn_13: find_isbn_13(index, api_result)
         )
     else
       puts "You already own this book! Please select a new one!" #NEED TO LOOP!
     end
   end
 
-add_new_book_from_api(choice, 3, book_search_results)
+add_new_book_from_api(choice, 3, api_result)
 
