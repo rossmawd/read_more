@@ -123,7 +123,8 @@ class User < ActiveRecord::Base
   end
 
   def must_return
-    self.borrowed_books-User_Book.possession_mine
+    ### Add an if statment to say none if none.
+    self.borrowed_book_reviews-User_Book.possession_others
   end
 
   def self.update_id
@@ -133,6 +134,39 @@ class User < ActiveRecord::Base
       users.save
     end
   end
+
+  def add_a_new_book_manually
+    # This will allow the user to add a new book to there library
+    prompt = TTY::Prompt.new
+
+    puts "A new "
+    sleep 0.5
+
+    user = self
+
+    prompt.collect do
+      key(:name).ask('Title: ')
+      key(:synopsis).ask('Synopsis: ')
+      key(:author).ask('Author: ')
+      key(:isbn).ask('ISBN Number')
+    end
+
+  end
+
+
+    # Book.create(name: "Harry Potter", synopsis: "about a wizard", author: "author 1", user_id: 4, genre_id: 3, isbn_13: 2809358195284)
+  end
+
+  def review_a_new_book
+    # Will allow the user to review a book
+    puts "Lets begin..."
+    sleep 0.5
+
+
+    # User_Book.create(user_id: 6, book_id: 1, read_status: "Completed", page_number: 732, rating: 5, review: "AMAZING!!!", possession: "On The Shelf")
+
+  end
+
 
   ####Ross's Methods Below!
 
