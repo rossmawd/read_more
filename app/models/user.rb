@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many :books
+  has_many :books #does this create a .books mthod that will interfere with below
   has_many :user_books
   has_many :books, through: :user_books
 
@@ -306,5 +306,18 @@ class User < ActiveRecord::Base
 
   ####Ross's Methods Below!
 
+  #Takes in an instance of a book, checks if the user created that book 
+  #(i.e owns the book) and destorys it AND it's User_Book entry
+    def delete_book(book_instance)
+      if self.books.include?(book_instance)
+        book_id = book_instance.id
+        book_instance.destroy
+        puts "#{book_instance.name} deleted!"
+        user_book =  User_Book.find_by(book_id: book_id)
+        user_book.destroy
+      else
+        puts "You do not own this book!"
+      end
+    end
 
-end
+  end
