@@ -306,9 +306,33 @@ class User < ActiveRecord::Base
 
   ####Ross's Methods Below!
 
-  #Takes in an instance of a book, checks if the user created that book 
+  def select_book_to_delete
+    prompt = TTY::Prompt.new
+    counter = 0
+    while self.books.length > counter
+      puts "Book #{counter + 1}
+      Title: #{self.books[counter].name}
+      Author: #{self.books[counter].author}
+      Synopsis: #{self.books[counter].synopsis}
+      Genre: #{self.books[counter].genre}
+      ISBN Number: #{self.books[counter].isbn_13}
+      Read Status: #{self.reviews[counter].read_status}
+      Current Page Number: #{self.reviews[counter].page_number}
+      My Rating: #{self.reviews[counter].rating}
+      My Review: #{self.reviews[counter].review}
+      Current Location: #{self.reviews[counter].possession}\n"
+      counter += 1
+    end
+    answer = prompt.ask('Which book number would you like to delete?', convert: :int)
+
+    book = self.books[answer-1]
+    review = self.reviews[answer-1]
+    delete_book(book, review)
+  end
+
+  #Takes in an instance of a book, checks if the user created that book
   #(i.e owns the book) and destorys it AND it's User_Book entry
-    def delete_book(book_instance)
+    def delete_book(book_instance, review_instance)
       if self.books.include?(book_instance)
         book_id = book_instance.id
         book_instance.destroy

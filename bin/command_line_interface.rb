@@ -111,6 +111,7 @@ def main_menu
      a.choice '📚  View Borrowed Books'
      a.choice '📚  Add a New Book'
      a.choice '📚  Edit a Book'
+     a.choice '📚  Delete a Book'
      a.choice '📚  My Account'
      a.choice ''
      a.choice '❌  Exit'
@@ -124,7 +125,10 @@ def main_menu
      when '📚  Add a New Book'
        add_a_new_book_manually
      when '📚  Edit a Book'
-       puts "This is where you will be able to edit, review or delete a book"
+       puts "This is where you will be able to edit your books"
+       main_menu
+     when '📚  Delete a Book'
+       puts "This is where you will be able to delete"
        main_menu
      when '📚  My Account'
        puts "Here you will be able to see account informaiton and make changes"
