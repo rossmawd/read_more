@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many :books  
+  has_many :books
   has_many :user_books
   has_many :books, through: :user_books
 
@@ -203,7 +203,7 @@ class User < ActiveRecord::Base
        end
      end
 
-     def update_book
+     def select_book
        prompt = TTY::Prompt.new
        counter = 0
        while self.books.length > counter
@@ -224,7 +224,11 @@ class User < ActiveRecord::Base
 
        book = self.books[answer-1]
        review = self.reviews[answer-1]
+       update_book(book, review, answer)
+     end
 
+     def update_book(book, review, answer)
+       prompt = TTY::Prompt.new
        puts "Great, we will be editing #{book.name}"
 
        selection = prompt.multi_select("Select all the fields you would like to update: ") do |a|
@@ -244,12 +248,12 @@ class User < ActiveRecord::Base
           case choice
           when ("Title")
             a1 = prompt.ask('Update the title: ')
-            book.read_status = a1
+            book.name = a1
           when ("Author")
             a2 = prompt.ask('Update the Author: ')
             book.author = a2
           when ("Synopsis")
-            a2 = prompt.ask('Update the Synopsis: ')
+            a3 = prompt.ask('Update the Synopsis: ')
             book.synopsis = a3
           when ("Genre")
             a4 = prompt.ask('Update the Genre: ')
@@ -276,7 +280,28 @@ class User < ActiveRecord::Base
             end
             review.possession = a10
           end
+          book.save
+          review.save
         end
+        sleep 0.5
+        display_book(answer-1)
+     end
+
+     def display_book(locator)
+       prompt = TTY::Prompt.new
+       puts "📚  Your book has been updated!
+       Title: #{self.books[locator].name}
+       Author: #{self.books[locator].author}
+       Synopsis: #{self.books[locator].synopsis}
+       Genre: #{self.books[locator].genre}
+       ISBN Number: #{self.books[locator].isbn_13}
+       Read Status: #{self.reviews[locator].read_status}
+       Current Page Number: #{self.reviews[locator].page_number}
+       My Rating: #{self.reviews[locator].rating}
+       My Review: #{self.reviews[locator].review}
+       Current Location: #{self.reviews[locator].possession}\n"
+       sleep 0.5
+       main_menu
      end
 
   ####Ross's Methods Below!
