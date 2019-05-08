@@ -8,7 +8,6 @@ def welcome
   puts pastel.cyan(font.write("Read More"))
 end
 
-
 ###################
 
 def start_menu
