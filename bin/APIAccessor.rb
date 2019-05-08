@@ -62,6 +62,7 @@ def book_choice_menu(api_result, i)
         if i >= 9 then break end
 
         display_three_books(i, api_result)
+        
         book_loop = TTY::Prompt.new
         bool = book_loop.yes?('Would you like to see more?')
         i += 3
