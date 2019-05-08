@@ -226,7 +226,7 @@ class User < ActiveRecord::Base
          counter += 1
        end
        answer = prompt.ask('Which book number would you like to edit?', convert: :int)
-       book =
+       #book =
      end
 
   ####Ross's Methods Below!

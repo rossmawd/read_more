@@ -74,7 +74,7 @@ def book_choice_menu(api_result, i)
   end
 end
 
-book_choice_menu(api_result, i)
+#book_choice_menu(api_result, i)
 
 
  #The user then chooses the one they want to enter into their database:
@@ -122,18 +122,20 @@ book_choice_menu(api_result, i)
         author: check_if_authors_key_exists(index, api_result), 
         isbn_13: find_isbn_13(index, api_result)
         )
+        puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
     else
       puts "You already own this book! Please select a new one!" #NEED TO LOOP!
     end
   end
-
+ 
 
 api_result = get_input_and_search_api #returns the API hash
 
-display_three_books(0, api_result) #iterates through above HASH's attributes and puts
+display_three_books(0, api_result) #iterates through above HASH's attributes and puts them out
 
-
+book_choice_menu(api_result, i=0) #asks the user if they want to see more books
 ###### HERE!!
+#book_choice #Promts the user to make a numerical choice
 
 add_new_book_from_api(book_choice, 3, api_result)
 
