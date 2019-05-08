@@ -16,9 +16,14 @@ Book.create(name: "Sapiens", synopsis: "history of humans", author: "author 3", 
 Book.create(name: "Human instinct", synopsis: "about human instinct", author: "author 4", user_id: 2, genre_id: 1)
 Book.create(name: "The Wave", synopsis: "School experiment", author: "author 5", user_id: 4, genre_id: 1)
 
+Book.create(name: "Lauren's Book", synopsis: "Lauren's Book Synopsis", author: "Lauren's Book Author", user_id: 6, genre_id: 1)
+
 User_Book.create(user_id: 2, book_id: 1, read_status: "Abandoned", page_number: 233, rating: 1, review: "Really bad", possession: "On The Shelf")
 User_Book.create(user_id: 3, book_id: 3, read_status: "Completed", page_number: 200, rating: 2, review: "It sucks", possession: "On The Shelf")
 User_Book.create(user_id: 4, book_id: 4, read_status: "Not Started", page_number: nil, rating: nil, review: nil, possession: "On The Shelf")
 User_Book.create(user_id: 1, book_id: 5, read_status: "Reading", page_number: 33, rating: 5, review: "Amazing", possession: "On The Shelf")
 User_Book.create(user_id: 5, book_id: 2, read_status: "Reading", page_number: 55, rating: 4, review: "So far OK", possession: "On The Shelf")
 User_Book.create(user_id: 3, book_id: 2, read_status: "Completed", page_number: 355, rating: 4, review: "Nice", possession: "Off The Shelf")
+
+User_Book.create(user_id: 6, book_id: 6, read_status: "Abandoned", page_number: 732, rating: 1, review: "CRAP!!!", possession: "Off The Shelf")
+User_Book.create(user_id: 6, book_id: 1, read_status: "Completed", page_number: 732, rating: 5, review: "AMAZING!!!", possession: "On The Shelf")

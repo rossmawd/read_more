@@ -54,8 +54,8 @@ class User < ActiveRecord::Base
       Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
     end
-    sleep 1
-    books_names_inner_menu
+    # sleep 1
+    # books_names_inner_menu
   end
 
   def my_borrowed_books_list
@@ -70,8 +70,8 @@ class User < ActiveRecord::Base
       Current Location: #{self.borrowed_book_reviews[counter].possession}\n"
       counter += 1
     end
-    sleep 1
-    books_names_inner_menu
+    # sleep 1
+    # books_names_inner_menu
   end
 
   def books_by_title_only
@@ -123,7 +123,8 @@ class User < ActiveRecord::Base
   end
 
   def must_return
-    self.borrowed_books-User_Book.possession_mine
+    ### Add an if statment to say none if none.
+    self.borrowed_book_reviews-User_Book.possession_others
   end
 
   def self.update_id
