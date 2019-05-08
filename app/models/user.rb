@@ -77,6 +77,7 @@ class User < ActiveRecord::Base
       My Review: #{self.borrowed_book_reviews[counter].review}
       Current Location: #{self.borrowed_book_reviews[counter].possession}
       Book Owner: #{borrowed_book_reviews[counter].user.first_name}\n"
+
       counter += 1
     end
     sleep 1

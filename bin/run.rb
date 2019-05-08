@@ -10,6 +10,7 @@ welcome
 
 puts "Hello and welcome to the book keeper!"
 sleep 1
+
 puts $quotes.sample
 sleep 0.5
 puts "Lets get started: "
