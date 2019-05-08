@@ -86,7 +86,8 @@ def create_account
    if User.find_by(user_name: username)
      puts "Welcome Back #{username}!"
 
-     User.find_by(user_name: username).check_password
+     user = User.find_by(user_name: username)
+     user.check_password
    else
      choice = prompt.select("Sorry, I can't find that username. Would you like to try again?") do |a|
        a.choice 'Try Again'
@@ -121,8 +122,7 @@ def main_menu
      when '📚  View Borrowed Books'
        my_borrowed_books_list
      when '📚  Add a New Book'
-       puts "This is where you will be able to add a new book to your library"
-       main_menu
+       add_a_new_book_manually
      when '📚  Review a Book'
        puts "This is where you will be able to review a new book"
        main_menu
