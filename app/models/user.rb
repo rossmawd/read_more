@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many :books
+  has_many :books  
   has_many :user_books
   has_many :books, through: :user_books
 
@@ -226,7 +226,7 @@ class User < ActiveRecord::Base
          counter += 1
        end
        answer = prompt.ask('Which book number would you like to edit?', convert: :int)
-       book =
+      # book =
      end
 
   ####Ross's Methods Below!
