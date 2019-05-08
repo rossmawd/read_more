@@ -1,6 +1,5 @@
-
-
 require 'pry'
+
 ###################
 
 def welcome
