@@ -3,41 +3,73 @@ require 'rest-client'
 require 'json'
 require_relative '../config/environment'   #Ross added this
 
-#BELOW: the CLI for Entering A book using the API
+#####BELOW: the CLI for Entering A book using the API
 
-puts "Welcome to Google Books API"
-puts "Please enter a book title"
+puts "Welcome to Google Books API "
+puts "Please enter a book title 📚"
 answer = gets.chomp
 
-puts " "
-puts "Thanks! Searching for book..."
-puts " "               #is there a better way for entering blank lines??
+puts 
+puts "Thanks! Searching for book... 🔍"
+puts               #is there a better way for entering blank lines??
 
 result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
 
 book_search_results = JSON.parse(result)
 
-puts "Books found!"
-
+puts "Books found! 😀  Here are the top 3:"
  
- # Displays the title, author, publishedDate for the top 3? results
- i = 0
- 3.times do
-    puts "Book #{i+1}"
-    puts "Title: #{book_search_results["items"][i]["volumeInfo"]["title"]}\n"
-    #BELOW 3 lines to adjust for the key 'authors' not always existing
-    authors = book_search_results["items"][i]["volumeInfo"]["authors"]
-    authors == nil ? output = nil : output = authors.join(", ")
-    puts "Author: #{output}"
-    puts "Date Published: #{book_search_results["items"][i]["volumeInfo"]["publishedDate"]}"
-    puts
-    i += 1
- end
+ # Displays the title, author, publishedDate for the top 3? results  
+ def display_three_books(i, book_search_results)
+  3.times do
+      puts "Book #{i+1}"
+      puts "Title: #{book_search_results["items"][i]["volumeInfo"]["title"]}\n"
+      #BELOW 3 lines to adjust for the key 'authors' not always existing
+      authors = book_search_results["items"][i]["volumeInfo"]["authors"]
+      authors == nil ? output = nil : output = authors.join(", ")
+      puts "Author: #{output}"
+      puts "Date Published: #{book_search_results["items"][i]["volumeInfo"]["publishedDate"]}"
+      puts
+      i += 1
+  end
+end
 
+display_three_books(0, book_search_results) 
+
+menu = TTY::Prompt.new
+ 
+selection = menu.select("What would you like to do?") do |a|
+  a.choice '📚  See the next 3 books'
+  a.choice '📚  Select one of these'
+  a.choice ''
+  a.choice '❌  Exit'
+end
+
+i = 3
+case selection
+  when '📚  See the next 3 books'
+    bool = true
+    while bool
+      more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n" : "Here are the next three:\n"
+      puts more_than_nine
+      if i >= 9 then break end
+      display_three_books(i, book_search_results)
+      
+      book_loop = TTY::Prompt.new
+      bool = book_loop.yes?('Would you like to see more?')
+      #binding.pry
+      i += 3
+    end
+  
+  when '📚  Select one of these'
+    #my_borrowed_books_list
+  when '❌  Exit'
+    exit
+end
 
  #The user then chooses the one they want to enter into their database:
 
-  puts "Please choose the book you would like to enter into you library by entering it's number (e.g. 1,2 or 3): "
+  puts "Please choose the book you would like to enter into your library by entering its number (e.g. 1,2 or 3): "
   choice = gets.chomp
   choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
 
