@@ -43,9 +43,7 @@ def create_account
       user = User.create(user_name: username)
 
       puts "Hi, #{username}, It's nice to meet you!"
-
       sleep 1
-
       password = prompt.mask('🔐   Please create a your password: ')
       user.update_password(password)
 
@@ -53,25 +51,30 @@ def create_account
       sleep 1
 
       puts "Now a few more steps to get you set up,"
-
       firstname = prompt.ask("✏️   Please enter your first name: ", required: true)
-
       lastname = prompt.ask("✏️   Please enter your last name: ", required: true)
-
       e_mail = prompt.ask('✏️   What is your email?'){|q| q.validate :email}
-
       age = prompt.ask("✏️   Please enter your age: ", required: true)
 
       user.update_user(firstname, lastname, e_mail, age)
 ### Confirm details with a recap and yes of no question
       user = User.last
-
       main_menu
    else
-      puts "That name is taken. Please choose another one."
-      create_account
-   end
- end
+      choice = prompt.select("That username is already taken. Please choose another one or login.") do |a|
+        a.choice 'Choose a new username'
+        a.choice 'Login'
+        a.choice 'Start Menu'
+      end
+      case selection
+      when 'Choose a new username'
+        create_account
+      when 'Login'
+        login_account
+      when 'Start Menu'
+        start_menu
+      end
+    end
 
  #################
 
@@ -98,71 +101,95 @@ def create_account
      end
    end
  end
-
 #################
-
 def main_menu
   puts "Welcome Back inside your own personally library."
 
   prompt = TTY::Prompt.new
   selection = prompt.select("Where to next?") do |a|
-     a.choice '📚  View Books'
+     a.choice '📚  View Own Books'
      a.choice '📚  View Borrowed Books'
      a.choice '📚  Add a New Book'
-     a.choice '📚  Review a Book'
+     a.choice '📚  Edit a Book'
+     a.choice '📚  My Account'
      a.choice ''
      a.choice '❌  Exit'
    end
 
    case selection
-   when '📚  View Books'
+   when '📚  View Own Books'
        my_books_list
      when '📚  View Borrowed Books'
        my_borrowed_books_list
      when '📚  Add a New Book'
        add_a_new_book_manually
-     when '📚  Review a Book'
-       puts "This is where you will be able to review a new book"
+     when '📚  Edit a Book'
+       puts "This is where you will be able to edit, review or delete a book"
+       main_menu
+     when '📚  My Account'
+       puts "Here you will be able to see account informaiton and make changes"
        main_menu
      when '❌  Exit'
        exit
    end
 end
-
 #######################
-
 def books_names_inner_menu
   prompt = TTY::Prompt.new
 
   selection = prompt.select("Where to next?") do |a|
-     a.choice '📚  Select Book to See More'
+     a.choice '📚  View Borrowed Books'
+     a.choice '📚  Add a New Book'
      a.choice '📚  Edit a Book'
-     a.choice '📚  Review a Book'
-     a.choice '📚  Main Menu'
+     a.choice '📚  My Account'
      a.choice ''
      a.choice '❌  Exit'
    end
 
    case selection
-   when '📚  Select Book to See More'
-       puts "See more about selected book, write a method to select book by number and shoe said book"
-       main_menu
+     when '📚  View Borrowed Books'
+       my_borrowed_books_list
+     when '📚  Add a New Book'
+       add_a_new_book_manually
      when '📚  Edit a Book'
-       puts "Write a method to ask for book number and edit said book"
+       puts "This is where you will be able to edit, review or delete a book"
        main_menu
-     when '📚  Review a Book'
-       puts "Write a method to ask for book number and review said book"
-       main_menu
-     when '📚  Main Menu'
+     when '📚  My Account'
+       puts "Here you will be able to see account informaiton and make changes"
        main_menu
      when '❌  Exit'
        exit
    end
  end
-
 ############################
+def borrowed_books_names_inner_menu
+  prompt = TTY::Prompt.new
 
+  selection = prompt.select("Where to next?") do |a|
+     a.choice '📚  View Own Books'
+     a.choice '📚  Add a New Book'
+     a.choice '📚  Edit a Book'
+     a.choice '📚  My Account'
+     a.choice ''
+     a.choice '❌  Exit'
+   end
 
+   case selection
+   when '📚  View Own Books'
+       my_books_list
+     when '📚  Add a New Book'
+       add_a_new_book_manually
+     when '📚  Edit a Book'
+       puts "This is where you will be able to edit, review or delete a book"
+       main_menu
+     when '📚  My Account'
+       puts "Here you will be able to see account informaiton and make changes"
+       main_menu
+     when '❌  Exit'
+       exit
+   end
+ end
+############################
 def internal_menu
     prompt = TTY::Prompt.new
     selection = prompt.select("Where to next?") do |a|
