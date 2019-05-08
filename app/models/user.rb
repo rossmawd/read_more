@@ -205,11 +205,6 @@ class User < ActiveRecord::Base
 
      def update_book
        prompt = TTY::Prompt.new
-
-     end
-
-     def select_book
-       prompt = TTY::Prompt.new
        counter = 0
        while self.books.length > counter
          puts "Book #{counter + 1}
@@ -219,14 +214,68 @@ class User < ActiveRecord::Base
          Genre: #{self.books[counter].genre}
          ISBN Number: #{self.books[counter].isbn_13}
          Read Status: #{self.reviews[counter].read_status}
-         Current Page Number: #{self.reviews[counter].page_num}
+         Current Page Number: #{self.reviews[counter].page_number}
          My Rating: #{self.reviews[counter].rating}
          My Review: #{self.reviews[counter].review}
          Current Location: #{self.reviews[counter].possession}\n"
          counter += 1
        end
        answer = prompt.ask('Which book number would you like to edit?', convert: :int)
-       book =
+       book = self.books[answer-1]
+       review = self.reviews[answer-1]
+
+       puts "Great, we will be editing #{book.name}"
+
+       selection = prompt.multi_select("Select all the fields you would like to update: ") do |a|
+          a.choice 'Title'
+          a.choice 'Author'
+          a.choice 'Synopsis'
+          a.choice 'Genre'
+          a.choice 'ISBN Number'
+          a.choice 'Read Status'
+          a.choice 'Current Page Number'
+          a.choice 'My Rating'
+          a.choice 'My Review'
+          a.choice 'Current Location'
+        end
+
+        selection.each do |choice|
+          case choice
+          when ("Title")
+            a1 = prompt.ask('Update the title: ')
+            book.read_status = a1
+          when ("Author")
+            a2 = prompt.ask('Update the Author: ')
+            book.author = a2
+          when ("Synopsis")
+            a2 = prompt.ask('Update the Synopsis: ')
+            book.synopsis = a3
+          when ("Genre")
+            a4 = prompt.ask('Update the Genre: ')
+            book.genre = a4
+          when ("ISBN Number")
+            a5 = prompt.ask('Update the ISBN Number: ')
+            book.isbn_13 = a5
+          when ("Read Status")
+            a6 = prompt.select('Update you reading status: ', %w(Unopened Completed Reading Abandoned))
+            review.read_status = a6
+          when ("Current Page Number")
+            a7 = prompt.ask('Update your current page number: ')
+            review.page_number = a7
+          when ("My Rating")
+            a8 = prompt.ask('Update your rating for this book: ')
+            review.rating = a8
+          when ("My Review")
+            a9 = prompt.ask('Update your review: ')
+            review.review = a9
+          when ("Current Page Number")
+            a10 = prompt.select('Update the books location: ') do |a|
+              a.choice 'On The Shelf'
+              a.choice 'Off The Shelf'
+            end
+            review.possession = a10
+          end
+        end
      end
 
   ####Ross's Methods Below!
