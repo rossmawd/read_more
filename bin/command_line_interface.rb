@@ -1,5 +1,23 @@
 require 'pry'
 ###################
+def bookcase
+  pastel = Pastel.new
+  puts pastel.cyan"
+               .--.           .---.        .-.
+           .---|--|   .-.     | A |  .---. |~|    .--.
+        .--|===|Ch|---|_|--.__| S |--|:::| |~|-==-|==|---.
+        |%%|NT2|oc|===| |~~|%%| C |--|   |_|~|CATS|  |___|-.
+        |  |   |ah|===| |==|  | I |  |:::|=| |    |GB|---|=|
+        |  |   |ol|   |_|__|  | I |__|   | | |    |  |___| |
+        |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
+        ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
+  "
+end
+###################
+def line
+  puts ""
+end
+###################
 def welcome
   font = TTY::Font.new(:standard)
   pastel = Pastel.new
@@ -14,11 +32,14 @@ def start_menu
     a.choice ' '
     a.choice '❌  Exit'
   end
-
   case selection
   when '📚  Create New Account'
+    line
+    sleep 0.5
     create_account
   when '📚  Login'
+    line
+    sleep 0.5
     login_account
   when '❌  Exit'
     exit
@@ -69,138 +90,138 @@ def create_account
       start_menu
     end
   end
-  #################
-  def login_account
-    prompt = TTY::Prompt.new
+end
+#################
+def login_account
+  prompt = TTY::Prompt.new
 
-    puts "✏️   Please enter a username: "
-    username = gets.chomp
+  puts "✏️   Please enter a username: "
+  username = gets.chomp
 
-    if User.find_by(user_name: username)
-      puts "Welcome Back #{username}!"
-
-      user = User.find_by(user_name: username)
-      user.check_password
-    else
-      choice = prompt.select("Sorry, I can't find that username. Would you like to try again?") do |a|
-        a.choice 'Try Again'
-        a.choice 'Back to Start Menu'
-      end
-      if choice == 'Try Again'
-        login_account
-      elsif choice == 'Back to Start Menu'
-        start_menu
-      end
+  if User.find_by(user_name: username)
+    puts "Welcome Back #{username}!"
+    line
+    user = User.find_by(user_name: username)
+    user.check_password
+  else
+    choice = prompt.select("Sorry, I can't find that username. Would you like to try again?") do |a|
+      a.choice 'Try Again'
+      a.choice 'Back to Start Menu'
+    end
+    if choice == 'Try Again'
+      login_account
+    elsif choice == 'Back to Start Menu'
+      start_menu
     end
   end
-  #################
-  def main_menu
-    puts "Welcome Back inside your own personally library."
-
-    prompt = TTY::Prompt.new
-    selection = prompt.select("Where to next?") do |a|
-      a.choice '📚  View Own Books'
-      a.choice '📚  View Borrowed Books'
-      a.choice '📚  Add a New Book'
-      a.choice '📚  Edit a Book'
-      a.choice '📚  Delete a Book'
-      a.choice '📚  My Account'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-
-    case selection
-    when '📚  View Own Books'
-      my_books_list
-    when '📚  View Borrowed Books'
-      my_borrowed_books_list
-    when '📚  Add a New Book'
-      add_new_book_menu
-    when '📚  Edit a Book'
-      select_book_to_edit
-    when '📚  Delete a Book'
-      puts "This is where you will be able to delete"
-      main_menu
-    when '📚  My Account'
-      puts "Here you will be able to see account informaiton and make changes"
-      main_menu
-    when '❌  Exit'
-      exit
-    end
+end
+#################
+def main_menu
+  line
+  puts "Welcome Back inside your own personally library."
+  line
+  prompt = TTY::Prompt.new
+  selection = prompt.select("Where to next?") do |a|
+    a.choice '📚  View Own Books'
+    a.choice '📚  View Borrowed Books'
+    a.choice '📚  Add a New Book'
+    a.choice '📚  Edit a Book'
+    a.choice '📚  Delete a Book'
+    a.choice '📚  My Account'
+    a.choice ''
+    a.choice '❌  Exit'
   end
-  #######################
-  def books_names_inner_menu
-    prompt = TTY::Prompt.new
 
-    selection = prompt.select("Where to next?") do |a|
-      a.choice '📚  View Borrowed Books'
-      a.choice '📚  Main Menu'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-
-    case selection
-    when '📚  View Borrowed Books'
-      my_borrowed_books_list
-    when '📚  Main Menu'
-      main_menu
-    when '❌  Exit'
-      exit
-    end
+  case selection
+  when '📚  View Own Books'
+    my_books_list
+  when '📚  View Borrowed Books'
+    my_borrowed_books_list
+  when '📚  Add a New Book'
+    add_new_book_menu
+  when '📚  Edit a Book'
+    select_book_to_edit
+  when '📚  Delete a Book'
+    puts "This is where you will be able to delete"
+    main_menu
+  when '📚  My Account'
+    puts "Here you will be able to see account informaiton and make changes"
+    main_menu
+  when '❌  Exit'
+    exit
   end
-  ############################
-  def borrowed_books_names_inner_menu
-    prompt = TTY::Prompt.new
-
-    selection = prompt.select("Where to next?") do |a|
-      a.choice '📚  View Own Books'
-      a.choice '📚  Main Menu'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-
-    case selection
-    when '📚  View Own Books'
-      my_books_list
-    when '📚  Main Menu'
-      main_menu
-    when '❌  Exit'
-      exit
-    end
+end
+#######################
+def books_names_inner_menu
+  prompt = TTY::Prompt.new
+  line
+  selection = prompt.select("Where to next?") do |a|
+    a.choice '📚  View Borrowed Books'
+    a.choice '📚  Main Menu'
+    a.choice ''
+    a.choice '❌  Exit'
   end
-  ############################
-  def account_page
-    # Called from MAIN_MENU
-    prompt = TTY::Prompt.new
-    puts $quotes.sample
-
-    puts "Hello #{self.user_name}\n"
-
-    selection = prompt.select("What would you like to do today?") do |a|
-      a.choice '📚  Update My Personal Details'
-      a,choice '📚  Change My Password'
-      a,choice '📚  Main Menu'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-
-    case selection
-    when '📚  Update My Personal Details'
-      update_personal_details
-    when '📚  Change My Password'
-      change_password
-    when '📚  Main Menu'
-      main_menu
-    when '❌  Exit'
-      exit
-    end
+  case selection
+  when '📚  View Borrowed Books'
+    my_borrowed_books_list
+  when '📚  Main Menu'
+    main_menu
+  when '❌  Exit'
+    exit
   end
-  ############################
-  def personal_details_inner_menu
-    # Called from UPDATE_PERSONAL_DETAILS
-    prompt = TTY::Prompt.new
-    selection = prompt.select("Where To Next?") do |a|
-    a,choice '📚  Change My Password'
+end
+############################
+def borrowed_books_names_inner_menu
+  prompt = TTY::Prompt.new
+  line
+  selection = prompt.select("Where to next?") do |a|
+    a.choice '📚  View Own Books'
+    a.choice '📚  Main Menu'
+    a.choice ''
+    a.choice '❌  Exit'
+  end
+  case selection
+  when '📚  View Own Books'
+    my_books_list
+  when '📚  Main Menu'
+    main_menu
+  when '❌  Exit'
+    exit
+  end
+end
+############################
+def account_page
+  # Called from MAIN_MENU
+  prompt = TTY::Prompt.new
+  puts $quotes.sample
+  line
+  puts "Hello #{self.user_name}\n"
+  line
+  selection = prompt.select("What would you like to do today?") do |a|
+    a.choice '📚  Update My Personal Details'
+    a.choice '📚  Change My Password'
+    a.choice '📚  Main Menu'
+    a.choice ''
+    a.choice '❌  Exit'
+  end
+  case selection
+  when '📚  Update My Personal Details'
+    update_personal_details
+  when '📚  Change My Password'
+    change_password
+  when '📚  Main Menu'
+    main_menu
+  when '❌  Exit'
+    exit
+  end
+end
+############################
+def personal_details_inner_menu
+  # Called from UPDATE_PERSONAL_DETAILS
+  prompt = TTY::Prompt.new
+  line
+  selection = prompt.select("Where To Next?") do |a|
+    a.choice '📚  Change My Password'
     a.choice '📚  Back to the Main Menu'
     a.choice ''
     a.choice '❌  Exit'

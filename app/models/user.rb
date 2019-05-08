@@ -16,12 +16,14 @@ class User < ActiveRecord::Base
   def check_password
     # Called from LOGIN method
     prompt = TTY::Prompt.new
+    line
     password = prompt.mask('🔐   Please enter your password: ')
     if password == self.password
       puts "Welcome Back!"
       user = self
       main_menu
     else
+      line
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
         a.choice 'Back to the Start Menu'
@@ -29,6 +31,7 @@ class User < ActiveRecord::Base
       if choice == 'Try Again'
         check_password
       elsif choice == 'Back to the Start Menu'
+        line
         start_menu
       end
     end
@@ -36,23 +39,40 @@ class User < ActiveRecord::Base
 
   def my_books_list
     # Called from MAIN_MENU and BORROWED_BOOKS_INNER_MENU
+    pastel = Pastel.new
     counter = 0
     while self.books.length > counter
-      puts "Book #{counter + 1}
-      Title: #{self.books[counter].name}
-      Author: #{self.books[counter].author}
-      Synopsis: #{self.books[counter].synopsis}
-      Genre: #{self.books[counter].genre}
-      ISBN Number: #{self.books[counter].isbn_13}
-      Read Status: #{self.reviews[counter].read_status}
-      Current Page Number: #{self.reviews[counter].page_number}
-      My Rating: #{self.reviews[counter].rating}
-      My Review: #{self.reviews[counter].review}
-      Current Location: #{self.reviews[counter].possession}\n"
+      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
+      pastel.cyan("Title: ")+"#{self.books[counter].name}\n"+
+      pastel.cyan("Author: ")+"#{self.books[counter].author}\n"+
+      pastel.cyan("Synopsis: ")+"#{self.books[counter].synopsis}\n"+
+      pastel.cyan("Genre: ")+"#{self.books[counter].genre}\n"+
+      pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
+      pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
+      pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
+      pastel.cyan("My Rating: ")+self.stars+"\n"+
+      pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
+      pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
       counter += 1
     end
     sleep 1
     books_names_inner_menu
+  end
+
+  def stars
+    rate = self.reviews.select{|reviews| reviews.rating}
+    case rate
+    when 1
+      puts " ⭐ "
+    when 2
+      puts " ⭐ ⭐ "
+    when 3
+      puts " ⭐ ⭐ ⭐ "
+    when 4
+      puts " ⭐ ⭐ ⭐ ⭐ "
+    when 5
+      puts " ⭐ ⭐ ⭐ ⭐ ⭐ "
+    end
   end
 
   def my_borrowed_books_list

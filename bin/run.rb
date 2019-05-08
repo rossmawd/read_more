@@ -7,12 +7,14 @@ font = TTY::Font.new(:standard)
 pastel = Pastel.new
 
 welcome
+bookcase
 
-puts "Hello and welcome to the book keeper!"
+puts "Hello and welcome to your bookcase!"
+line
 sleep 1
-
-puts $quotes.sample
+puts "\"#{$quotes.sample}\""
 sleep 0.5
+line
 puts "Lets get started: "
-
+line
 start_menu
