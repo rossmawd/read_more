@@ -8,7 +8,6 @@ def welcome
   puts pastel.cyan(font.write("Read More"))
 end
 
-
 ###################
 
 def start_menu
@@ -162,6 +161,7 @@ def books_names_inner_menu
  end
 
 ############################
+
 
 def internal_menu
     prompt = TTY::Prompt.new

@@ -12,7 +12,9 @@ puts "Hello and welcome to the book keeper!"
 
 sleep 1
 
-$quotes.sample
+
+puts $quotes.sample
+
 
 sleep 1
 
