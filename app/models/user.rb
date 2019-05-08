@@ -67,7 +67,8 @@ class User < ActiveRecord::Base
       Synopsis: #{self.borrowed_books[counter].synopsis}
       My Rating: #{self.borrowed_book_reviews[counter].rating}
       My Review: #{self.borrowed_book_reviews[counter].review}
-      Current Location: #{self.borrowed_book_reviews[counter].possession}\n"
+      Current Location: #{self.borrowed_book_reviews[counter].possession}
+      Book Owner: #{borrowed_book_reviews[counter].user.first_name}\n"
       counter += 1
     end
     sleep 1
