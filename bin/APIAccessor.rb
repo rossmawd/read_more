@@ -22,10 +22,10 @@ def get_input_and_search_api
   book_search_results
 end
 
-api_result = get_input_and_search_api
+#api_result = get_input_and_search_api
  
  # Displays the title, author, publishedDate for the top 3? results  
-def display_three_books(i, api_result)
+def display_three_books(i = 0, api_result)
   3.times do
       puts "Book #{i+1}"
       puts "Title: #{api_result["items"][i]["volumeInfo"]["title"]}\n"
@@ -39,43 +39,50 @@ def display_three_books(i, api_result)
   end
 end
 
-display_three_books(0, api_result) 
+#display_three_books(0, api_result) 
 
-menu = TTY::Prompt.new
+
+def book_choice_menu(api_result, i)
+  menu = TTY::Prompt.new
  
-selection = menu.select("What would you like to do?") do |a|
-  a.choice '📚  See the next 3 books'
-  a.choice '📚  Select one of these'
-  a.choice ''
-  a.choice '❌  Exit'
+  selection = menu.select("What would you like to do?") do |a|
+    a.choice '📚  See the next 3 books'
+    a.choice '📚  Select one of these'
+    a.choice ''
+    a.choice '❌  Exit'
+  end
+
+  i = 3
+  case selection
+    when '📚  See the next 3 books'
+      bool = true
+      while bool
+        more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
+        puts more_than_nine
+        if i >= 9 then break end
+
+        display_three_books(i, api_result)
+        book_loop = TTY::Prompt.new
+        bool = book_loop.yes?('Would you like to see more?')
+        i += 3
+      end
+    
+    when '📚  Select one of these'
+      #my_borrowed_books_list
+    when '❌  Exit'
+      exit
+  end
 end
 
-i = 3
-case selection
-  when '📚  See the next 3 books'
-    bool = true
-    while bool
-      more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
-      puts more_than_nine
-      if i >= 9 then break end
+book_choice_menu(api_result, i)
 
-      display_three_books(i, api_result)
-      book_loop = TTY::Prompt.new
-      bool = book_loop.yes?('Would you like to see more?')
-      i += 3
-    end
-  
-  when '📚  Select one of these'
-    #my_borrowed_books_list
-  when '❌  Exit'
-    exit
-end
 
  #The user then chooses the one they want to enter into their database:
-
-  puts "Please choose the book you would like to enter into your library by entering its number (e.g. 1,2 or 3): "
-  choice = gets.chomp
-  choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
+  def book_choice
+    puts "Please choose the book you would like to enter into your library by entering its number (e.g. 1,2 or 3): "
+    choice = gets.chomp
+    choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
+  end
 
   #HELPER:not every book has 'authors'
   def check_if_authors_key_exists(index, api_result)
@@ -103,11 +110,11 @@ end
     isbn
   end
 
-  def add_new_book_from_api(choice, user_id, api_result)
-    index = choice - 1
+  def add_new_book_from_api(book_choice, user_id, api_result)
+    index = book_choice - 1
 
     #Below searhes ALL books, need to specify only the user's books (Once I move this into the User class):
-  if Book.all.find_by(isbn_13: api_result["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
+    if Book.all.find_by(isbn_13: api_result["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
       Book.create(
         name: api_result["items"][index]["volumeInfo"]["title"], 
         synopsis: api_result["items"][index]["volumeInfo"]["description"], 
@@ -120,5 +127,13 @@ end
     end
   end
 
-add_new_book_from_api(choice, 3, api_result)
+
+api_result = get_input_and_search_api #returns the API hash
+
+display_three_books(0, api_result) #iterates through above HASH's attributes and puts
+
+
+###### HERE!!
+
+add_new_book_from_api(book_choice, 3, api_result)
 
