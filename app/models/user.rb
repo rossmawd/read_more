@@ -221,7 +221,9 @@ class User < ActiveRecord::Base
          counter += 1
        end
        answer = prompt.ask('Which book number would you like to edit?', convert: :int)
-
+       if answer == exit
+         exit
+       else
        book = self.books[answer-1]
        review = self.reviews[answer-1]
        update_book(book, review, answer)
