@@ -139,22 +139,35 @@ class User < ActiveRecord::Base
     # This will allow the user to add a new book to there library
     prompt = TTY::Prompt.new
 
-    puts "A new "
+    puts "The more that you read, the more things you will know. The more that you learn, the more places you’ll go. – Dr. Seuss"
     sleep 0.5
 
-    user = self
-
     prompt.collect do
-      key(:name).ask('Title: ')
-      key(:synopsis).ask('Synopsis: ')
-      key(:author).ask('Author: ')
-      key(:isbn).ask('ISBN Number')
+      key(:book_name).ask('Title: ')
+      key(:book_synopsis).ask('Synopsis: ')
+      key(:book_author).ask('Author: ')
+      key(:book_isbn).ask('ISBN Number')
     end
 
-  end
+    user = self
+    book = Book.create(name: book_name, synopsis: book_synopsis, author: book_author, user_id: user, isbn_13: book_isbn)
 
+    selection = prompt.select("Where to next?") do |a|
+       a.choice '📚  Review This Book'
+       a.choice '📚  Main Menu'
+       a.choice ''
+       a.choice '❌  Exit'
+     end
 
-    # Book.create(name: "Harry Potter", synopsis: "about a wizard", author: "author 1", user_id: 4, genre_id: 3, isbn_13: 2809358195284)
+     case selection
+     when '📚  Review this Book'
+         puts "You are going to review the book you just made"
+         main_menu
+       when '📚  Main Menu'
+         main_menu
+       when '❌  Exit'
+         exit
+     end
   end
 
   def review_a_new_book
