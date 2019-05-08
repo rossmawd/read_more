@@ -203,6 +203,32 @@ class User < ActiveRecord::Base
        end
      end
 
+     def update_book
+       prompt = TTY::Prompt.new
+
+     end
+
+     def select_book
+       prompt = TTY::Prompt.new
+       counter = 0
+       while self.books.length > counter
+         puts "Book #{counter + 1}
+         Title: #{self.books[counter].name}
+         Author: #{self.books[counter].author}
+         Synopsis: #{self.books[counter].synopsis}
+         Genre: #{self.books[counter].genre}
+         ISBN Number: #{self.books[counter].isbn_13}
+         Read Status: #{self.reviews[counter].read_status}
+         Current Page Number: #{self.reviews[counter].page_num}
+         My Rating: #{self.reviews[counter].rating}
+         My Review: #{self.reviews[counter].review}
+         Current Location: #{self.reviews[counter].possession}\n"
+         counter += 1
+       end
+       answer = prompt.ask('Which book number would you like to edit?', convert: :int)
+       book =
+     end
+
   ####Ross's Methods Below!
 
 
