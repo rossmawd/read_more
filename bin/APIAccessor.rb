@@ -19,12 +19,16 @@ puts " "               #is there a better way for entering blank lines??
 
  puts "Books found!"
 
+ 
  # Displays the title, author, publishedDate for the top 3? results
  i = 0
  3.times do
     puts "Book #{i+1}"
     puts "Title: #{book_search_results["items"][i]["volumeInfo"]["title"]}\n"
-    puts "Author(s): #{book_search_results["items"][i]["volumeInfo"]["authors"].join(", ")}"
+    #BELOW 3 lines to adjust for the key 'authors' not always existing
+    authors = book_search_results["items"][i]["volumeInfo"]["authors"]
+    authors == nil ? output = nil : output = authors.join(", ")
+    puts "Author: #{output}"
     puts "Date Published: #{book_search_results["items"][i]["volumeInfo"]["publishedDate"]}"
     puts
     i += 1
@@ -37,17 +41,29 @@ puts " "               #is there a better way for entering blank lines??
   choice = gets.chomp
   choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
 
+  def check_if_authors_key_exists(index, book_search_results)
+    authors = book_search_results["items"][index]["volumeInfo"]["authors"]
+    authors == nil ? output = nil : output = authors.join(", ")
+    output
+  end
+
+
+
 def add_new_book_from_api(choice, user_id, book_search_results)
   index = choice - 1
+  #authors = book_search_results["items"][index]["volumeInfo"]["authors"]
+  #authors == nil ? output = nil : output = authors.join(", ")
+  check_if_authors_key_exists(index, book_search_results)
   #Below searhes ALL books, need to specify only the user's books (Once I move this into the User class):
  if Book.all.find_by(isbn_13: book_search_results["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
     Book.create(
       name: book_search_results["items"][index]["volumeInfo"]["title"], 
       synopsis: book_search_results["items"][index]["volumeInfo"]["description"], 
       user_id: user_id, 
-      author: book_search_results["items"][index]["volumeInfo"]["authors"].join(', '),
+      author: check_if_authors_key_exists(index, book_search_results),
       isbn_13: book_search_results["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"] #the API is inconsistant here! 
       #sometimes this array position is ISBN10, sometimes ISBN13
+      ##h.include?(key) --> true/false
       )
   else
     puts "You already own this book! Please select a new one!" #NEED TO LOOP!
