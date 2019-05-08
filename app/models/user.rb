@@ -49,6 +49,10 @@ class User < ActiveRecord::Base
       Title: #{self.books[counter].name}
       Author: #{self.books[counter].author}
       Synopsis: #{self.books[counter].synopsis}
+      Genre: #{self.books[counter].genre}
+      ISBN Number: #{self.books[counter].isbn_13}
+      Read Status: #{self.reviews[counter].read_status}
+      Current Page Number: #{self.reviews[counter].page_num}
       My Rating: #{self.reviews[counter].rating}
       My Review: #{self.reviews[counter].review}
       Current Location: #{self.reviews[counter].possession}\n"
@@ -65,6 +69,10 @@ class User < ActiveRecord::Base
       Title: #{self.borrowed_books[counter].name}
       Author: #{self.borrowed_books[counter].author}
       Synopsis: #{self.borrowed_books[counter].synopsis}
+      Genre: #{self.borrowed_books[counter].genre}
+      ISBN Number: #{self.borrowed_books[counter].isbn_13}
+      Read Status: #{self.borrowed_book_reviews[counter].read_status}
+      Current Page Number: #{self.borrowed_book_reviews[counter].page_num}
       My Rating: #{self.borrowed_book_reviews[counter].rating}
       My Review: #{self.borrowed_book_reviews[counter].review}
       Current Location: #{self.borrowed_book_reviews[counter].possession}
@@ -147,14 +155,23 @@ class User < ActiveRecord::Base
       key(:book_name).ask('Title: ')
       key(:book_synopsis).ask('Synopsis: ')
       key(:book_author).ask('Author: ')
-      key(:book_isbn).ask('ISBN Number')
+      key(:genre).ask('Genre: ')
+      key(:book_isbn).ask('ISBN Number: ')
+      key(:read_status).select('Read Status: ', %w(Unopened Completed Reading Abandoned))
+      key(:page_num).ask('Current Page Number: ')
+      key(:rating).ask('Rating: ')
+      key(:review).ask('Review: ')
+      key(:possession).select('Location: ') do |a|
+        a.choice 'On The Shelf'
+        a.choice 'Off The Shelf'
+      end
     end
 
     user = self
-    book = Book.create(name: answers[:book_name], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
+    book = Book.create(name: answers[:book_name], genre: answers[:genre], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
+    review = User_Book.create(user_id: user.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
 
     selection = prompt.select("Where to next?") do |a|
-       a.choice '📚  Review This Book'
        a.choice '📚  Main Menu'
        a.choice ''
        a.choice '❌  Exit'
@@ -168,19 +185,8 @@ class User < ActiveRecord::Base
          main_menu
        when '❌  Exit'
          exit
+       end
      end
-  end
-
-  def review_a_new_book
-    # Will allow the user to review a book
-    puts "Lets begin..."
-    sleep 0.5
-
-
-    # User_Book.create(user_id: 6, book_id: 1, read_status: "Completed", page_number: 732, rating: 5, review: "AMAZING!!!", possession: "On The Shelf")
-
-  end
-
 
   ####Ross's Methods Below!
 
