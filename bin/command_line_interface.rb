@@ -190,24 +190,24 @@ def borrowed_books_names_inner_menu
    end
  end
 ############################
-def internal_menu
-    prompt = TTY::Prompt.new
-    selection = prompt.select("Where to next?") do |a|
-       a.choice '📚  Sort by Title'
-       a.choice '📚  Sort by Author'
-       a.choice '📚  Main Menu'
-       a.choice ''
-       a.choice '❌  Exit'
-     end
-
-     case selection
-     when '📚  Sort by Title'
-         puts "Sorting by Title"
-       when '📚  Sort by Author'
-         puts "Sorting by Author"
-       when '📚  Main Menu'
-         self.main_menu
-       when '❌  Exit'
-         exit
-     end
+# def internal_menu
+#     prompt = TTY::Prompt.new
+#     selection = prompt.select("Where to next?") do |a|
+#        a.choice '📚  Sort by Title'
+#        a.choice '📚  Sort by Author'
+#        a.choice '📚  Main Menu'
+#        a.choice ''
+#        a.choice '❌  Exit'
+#      end
+#
+#      case selection
+#      when '📚  Sort by Title'
+#          puts "Sorting by Title"
+#        when '📚  Sort by Author'
+#          puts "Sorting by Author"
+#        when '📚  Main Menu'
+#          self.main_menu
+#        when '❌  Exit'
+#          exit
+#      end
 end
