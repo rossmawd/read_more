@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
       Genre: #{self.books[counter].genre}
       ISBN Number: #{self.books[counter].isbn_13}
       Read Status: #{self.reviews[counter].read_status}
-      Current Page Number: #{self.reviews[counter].page_num}
+      Current Page Number: #{self.reviews[counter].page_number}
       My Rating: #{self.reviews[counter].rating}
       My Review: #{self.reviews[counter].review}
       Current Location: #{self.reviews[counter].possession}\n"
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
       Genre: #{self.borrowed_books[counter].genre}
       ISBN Number: #{self.borrowed_books[counter].isbn_13}
       Read Status: #{self.borrowed_book_reviews[counter].read_status}
-      Current Page Number: #{self.borrowed_book_reviews[counter].page_num}
+      Current Page Number: #{self.borrowed_book_reviews[counter].page_number}
       My Rating: #{self.borrowed_book_reviews[counter].rating}
       My Review: #{self.borrowed_book_reviews[counter].review}
       Current Location: #{self.borrowed_book_reviews[counter].possession}
@@ -154,8 +154,8 @@ class User < ActiveRecord::Base
 
     answers = prompt.collect do
       key(:book_name).ask('Title: ')
-      key(:book_synopsis).ask('Synopsis: ')
       key(:book_author).ask('Author: ')
+      key(:book_synopsis).ask('Synopsis: ')
       key(:genre).ask('Genre: ')
       key(:book_isbn).ask('ISBN Number: ')
       key(:read_status).select('Read Status: ', %w(Unopened Completed Reading Abandoned))
@@ -171,6 +171,20 @@ class User < ActiveRecord::Base
     user = self
     book = Book.create(name: answers[:book_name], genre: answers[:genre], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
     review = User_Book.create(user_id: user.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
+    sleep 0.5
+    puts "Great! That book has been added to your library, take a look:"
+    sleep 0.5
+    puts "Title: #{answers[:book_name]}
+    Author: #{answer[:book_author]}
+    Synopsis: #{answer[:book_synopsis]}
+    Genre: #{answer[:genre]}
+    ISBN Number: #{answer[:book_isbn]}
+    Read Status: #{answers[:read_status]}
+    Current Page Number: #{answers[:page_num]}
+    My Rating: #{answers[:rating]}
+    My Review: #{answers[:review]}
+    Current Location: #{answers[:possession]}\n"
+
 
     selection = prompt.select("Where to next?") do |a|
        a.choice '📚  Main Menu'
