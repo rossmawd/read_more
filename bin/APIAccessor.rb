@@ -34,6 +34,7 @@ def display_three_books(i = 0, api_result)
       authors == nil ? output = nil : output = authors.join(", ")
       puts "Author: #{output}"
       puts "Date Published: #{api_result["items"][i]["volumeInfo"]["publishedDate"]}"
+      puts "Publisher: #{api_result["items"][i]["volumeInfo"]["publisher"]}"
       puts
       i += 1
   end
@@ -80,7 +81,7 @@ end
 
  #The user then chooses the one they want to enter into their database:
   def book_choice
-    puts "Please choose the book you would like to enter into your library by entering its number (e.g. 1,2 or 3): "
+    puts "Please enter a book\'s number to enter it into your library: "
     choice = gets.chomp
     choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
   end
@@ -111,14 +112,15 @@ end
     isbn
   end
 
+  #Need to connect to a user (Once I move this into the User class):
   def add_new_book_from_api(book_choice, user_id, api_result)
     index = book_choice - 1
 
-    #Below searhes ALL books, need to specify only the user's books (Once I move this into the User class):
     if Book.all.find_by(isbn_13: api_result["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
       Book.create(
         name: api_result["items"][index]["volumeInfo"]["title"], 
-        synopsis: api_result["items"][index]["volumeInfo"]["description"], 
+        synopsis: api_result["items"][index]["volumeInfo"]["description"],
+        genre: api_result["items"][index]["volumeInfo"]["categories"].join(", "),
         user_id: user_id, 
         author: check_if_authors_key_exists(index, api_result), 
         isbn_13: find_isbn_13(index, api_result)
