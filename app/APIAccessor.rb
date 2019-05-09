@@ -101,7 +101,8 @@ class ApiAccessor < ActiveRecord::Base
         genre: check_if_genre_key_exists(index, api_result),
         user_id: user_id, 
         author: check_if_authors_key_exists(index, api_result), 
-        isbn_13: find_isbn_13(index, api_result)
+        isbn_13: find_isbn_13(index, api_result),
+        url: api_result["items"][index]["volumeInfo"]["previewLink"]
         )
       
       User_Book.create(
