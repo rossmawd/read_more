@@ -58,6 +58,7 @@ class User < ActiveRecord::Base
       pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
       pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
       counter += 1
+      Cli.line
       sleep 0.2
     end
     sleep 0.5
@@ -86,6 +87,7 @@ class User < ActiveRecord::Base
       pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
       pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
       counter += 1
+      Cli.line
       sleep 0.2
     end
     sleep 0.5
@@ -172,8 +174,9 @@ class User < ActiveRecord::Base
     case selection
     when '🏠  Main Menu'
       Cli.main_menu
+    when ''
     when '❌  Exit'
-      exit
+      Cli.exit
     end
   end
 
@@ -351,8 +354,10 @@ class User < ActiveRecord::Base
     old_password = prompt.mask('🔐   Please enter your OLD password: ')
     if old_password == self.password
       new_password = prompt.mask('🔐   Please enter your NEW password: ')
-      update_password(new_password)
-      puts "Great! That has been updated!"
+      self.update(password: new_password)
+      Cli.line
+      puts "Great! That has been updated! 💾 "
+      sleep 2
       Cli.main_menu
     else
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
