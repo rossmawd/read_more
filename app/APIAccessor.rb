@@ -1,8 +1,3 @@
-# require 'pry'
-# require 'rest-client'
-# require 'json'
-# require_relative '../config/environment'   #Ross added this
-
 class ApiAccessor < ActiveRecord::Base
 
     #HELPER:not every book has 'authors'
@@ -38,8 +33,6 @@ class ApiAccessor < ActiveRecord::Base
       isbn
     end
 
-  #####BELOW: the CLI for Entering A book using the API
-
   # Displays the title, author, publishedDate for the top 3? results  
   def self.display_three_books(i = 0, api_result)
     3.times do
@@ -55,7 +48,8 @@ class ApiAccessor < ActiveRecord::Base
         i += 1
     end
   end
-
+ 
+  #TTY inteface asking the user if they want to choose from 1st 3 books, or see 3 more
   def self.book_choice_menu(api_result)
     menu = TTY::Prompt.new
   
@@ -82,7 +76,7 @@ class ApiAccessor < ActiveRecord::Base
         end
       
       when '📚  Select one of these'
-        #my_borrowed_books_list
+        #blank as it moves to next method anyway
       when '❌  Exit'
         exit
     end
@@ -95,11 +89,12 @@ class ApiAccessor < ActiveRecord::Base
     choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
   end
 
-  #Need to connect to a user (Once I move this into the User class):
+  #Adds book (if not already owned) and creates a User_book instance
   def self.add_new_book_from_api(book_choice, user_id, api_result)
     index = book_choice - 1
-
-    if Book.all.find_by(isbn_13: api_result["items"][index]["volumeInfo"]["industryIdentifiers"][0]["identifier"]) == nil
+    
+    if Book.all.find_by(isbn_13: find_isbn_13(index, api_result)) == nil
+      book_isbn = find_isbn_13(index, api_result)
       Book.create(
         name: api_result["items"][index]["volumeInfo"]["title"], 
         synopsis: api_result["items"][index]["volumeInfo"]["description"],
@@ -109,23 +104,22 @@ class ApiAccessor < ActiveRecord::Base
         isbn_13: find_isbn_13(index, api_result)
         )
       
-      # User_Book.create(
-      #   review: ""
-      #   rating: 
-      #   page_number:
-      #   read_status:
-      #   book_id: #How do I get this?
-      #   user_id: user_id
-      #   possession: 
-        
-      # )
+      User_Book.create(
+        review: "",
+        rating: 0,
+        page_number: 0,
+        read_status: "",
+        book_id: Book.all.find_by(isbn_13: book_isbn),
+        user_id: user_id,
+        possession: "",
+       )
         puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
     else
-      puts "You already own this book! Please select a new one!" #NEED TO LOOP!
+      puts "You already own this book! Please select a new one!" 
     end
   end
 
-  #This method collects the user's search input and calls all other methods needed to add book via API
+  #This method collects the user's search input and calls ALL other methods needed to add book via API
   def self.get_input_and_search_api
     puts
     puts "-----------------------------------------------------"
@@ -134,7 +128,7 @@ class ApiAccessor < ActiveRecord::Base
 
     puts 
     puts "Thanks! Searching for book... 🔍"
-    puts               #is there a better way for entering blank lines??
+    puts             
 
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
 
@@ -151,10 +145,6 @@ class ApiAccessor < ActiveRecord::Base
     bool ? get_input_and_search_api : Cli.main_menu
 
   end
-
-  ######################### MANUAL CALL TO BE REMOVED
-  #get_input_and_search_api
-  ###################################
 
 end
 
