@@ -1,5 +1,6 @@
 require_relative '../config/environment'
 
+Cli.clear
 
 prompt = TTY::Prompt.new
 font = TTY::Font.new(:standard)
