@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
       pastel.cyan("ISBN Number: ") + "#{self.borrowed_books[counter].isbn_13}\n" +
       pastel.cyan("Read Status: ") + "#{self.borrowed_book_reviews[counter].read_status}\n" +
       pastel.cyan("Current Page Number: ") + "#{self.borrowed_book_reviews[counter].page_number}\n" +
-      pastel.cyan("My Rating: ") + "#{self.borrowed_book_reviews[counter].rating}\n" +
+      pastel.cyan("My Rating: #{stars(self.borrowed_book_reviews[counter].rating)}\n") +
       pastel.cyan("My Review: ") + "#{self.borrowed_book_reviews[counter].review}\n" +
       pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
       pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
@@ -192,7 +192,7 @@ class User < ActiveRecord::Base
     ISBN Number: #{answer[:book_isbn]}
     Read Status: #{answers[:read_status]}
     Current Page Number: #{answers[:page_num]}
-    My Rating: #{answers[:rating]}
+    My Rating: #{stars(answers[:rating])} pastel.cyan("My Rating:
     My Review: #{answers[:review]}
     Current Location: #{answers[:possession]}\n"
 
@@ -223,7 +223,7 @@ class User < ActiveRecord::Base
       ISBN Number: #{self.books[counter].isbn_13}
       Read Status: #{self.reviews[counter].read_status}
       Current Page Number: #{self.reviews[counter].page_number}
-      My Rating: #{self.reviews[counter].rating}
+      My Rating: #{stars(self.reviews[counter].rating)}
       My Review: #{self.reviews[counter].review}
       Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
@@ -310,7 +310,7 @@ class User < ActiveRecord::Base
     ISBN Number: #{self.books[locator].isbn_13}
     Read Status: #{self.reviews[locator].read_status}
     Current Page Number: #{self.reviews[locator].page_number}
-    My Rating: #{self.reviews[locator].rating}
+    My Rating: #{stars(self.reviews[locator].rating)}
     My Review: #{self.reviews[locator].review}
     Current Location: #{self.reviews[locator].possession}\n"
     sleep 0.5
@@ -466,7 +466,7 @@ class User < ActiveRecord::Base
       # ISBN Number: #{self.books[counter].isbn_13}
       # Read Status: #{self.reviews[counter].read_status}
       # Current Page Number: #{self.reviews[counter].page_number}
-      # My Rating: #{self.reviews[counter].rating}
+      # My Rating: #{stars(self.reviews[counter].rating)}
       # My Review: #{self.reviews[counter].review}
       # Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
