@@ -137,7 +137,7 @@ class User < ActiveRecord::Base
       key(:book_isbn).ask('ISBN Number: ')
       key(:read_status).select('Read Status: ', %w(Unopened Completed Reading Abandoned))
       key(:page_num).ask('Current Page Number: ')
-      key(:rating).ask('Rating: ')
+      key(:rating).slider('Rating: ', max: 5, step: 1, default: 3)
       key(:review).ask('Review: ')
       key(:possession).select('Location: ') do |a|
         a.choice 'On The Shelf'
@@ -248,7 +248,7 @@ class User < ActiveRecord::Base
         a7 = prompt.ask('Update your current page number: ')
         review.page_number = a7
       when ("My Rating")
-        a8 = prompt.ask('Update your rating for this book: ')
+        a8 = prompt.slider('Update your rating for this book: ', max: 5, step: 1, default: 3)
         review.rating = a8
       when ("My Review")
         a9 = prompt.ask('Update your review: ')
