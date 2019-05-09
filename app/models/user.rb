@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 
   def check_password
     # Called from LOGIN method
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
 
     password = prompt.mask('🔐   Please enter your password: ')
     if password == self.password
@@ -40,26 +40,48 @@ class User < ActiveRecord::Base
   def my_books_list
     # Called from MAIN_MENU and BORROWED_BOOKS_INNER_MENU
     pastel = Pastel.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     Cli.clear
     Cli.bookcase
     Cli.quotation
     Cli.line
-    counter = 0
-    while self.books.length > counter
-      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
-      pastel.cyan("Title: ")+"#{self.books[counter].name}\n"+
-      pastel.cyan("Author: ")+"#{self.books[counter].author}\n"+
-      pastel.cyan("Synopsis: ")+"#{self.books[counter].synopsis}\n"+
-      pastel.cyan("Genre: ")+"#{self.books[counter].genre}\n"+
-      pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
-      pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
-      pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
-      pastel.cyan("My Rating: #{Cli.stars(self.reviews[counter].rating)}\n") +
-      pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
-      pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
-      counter += 1
+    if self.books.length == 0
+      puts pastel.cyan("😲 Oh No...You don't have any books on your shelf yet.")
       Cli.line
-      sleep 0.2
+      sleep 1
+      selection = prompt.select(" 😀 Add a new book now 😀 \n", active_color: :cyan) do |a|
+        a.choice '📚  Add a New Book'
+        a.choice '🏠  Main Menu'
+        a.choice ''
+        a.choice '❌  Exit'
+      end
+      case selection
+      when '🏠  Main Menu'
+        Cli.main_menu
+      when '📚  Add a New Book'
+        Cli.add_new_book_menu
+      when ''
+        Cli.easter_egg
+      when '❌  Exit'
+        Cli.exit
+      end
+    else counter = 0
+      while self.books.length > counter
+        puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
+        pastel.cyan("Title: ")+"#{self.books[counter].name}\n"+
+        pastel.cyan("Author: ")+"#{self.books[counter].author}\n"+
+        pastel.cyan("Synopsis: ")+"#{self.books[counter].synopsis}\n"+
+        pastel.cyan("Genre: ")+"#{self.books[counter].genre}\n"+
+        pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
+        pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
+        pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
+        pastel.cyan("My Rating: #{Cli.stars(self.reviews[counter].rating)}\n") +
+        pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
+        pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
+        counter += 1
+        Cli.line
+        sleep 0.2
+      end
     end
     sleep 0.5
     Cli.books_names_inner_menu
@@ -72,26 +94,38 @@ class User < ActiveRecord::Base
     Cli.bookcase
     Cli.quotation
     Cli.line
-    counter = 0
-    while self.borrowed_books.length > counter
-      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
-      pastel.cyan("Title: ") + "#{self.borrowed_books[counter].name}\n" +
-      pastel.cyan("Author: ") + "#{self.borrowed_books[counter].author}\n" +
-      pastel.cyan("Synopsis: ") + "#{self.borrowed_books[counter].synopsis}\n" +
-      pastel.cyan("Genre: ") + "#{self.borrowed_books[counter].genre}\n" +
-      pastel.cyan("ISBN Number: ") + "#{self.borrowed_books[counter].isbn_13}\n" +
-      pastel.cyan("Read Status: ") + "#{self.borrowed_book_reviews[counter].read_status}\n" +
-      pastel.cyan("Current Page Number: ") + "#{self.borrowed_book_reviews[counter].page_number}\n" +
-      pastel.cyan("My Rating: #{Cli.stars(self.borrowed_book_reviews[counter].rating)}\n") +
-      pastel.cyan("My Review: ") + "#{self.borrowed_book_reviews[counter].review}\n" +
-      pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
-      pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
-      counter += 1
+    if self.books.length == 0
+      puts pastel.cyan("😲 Oh No...You don't have any books on your shelf yet.")
       Cli.line
-      sleep 0.2
+      sleep 1
+      selection = prompt.select(" 😀 Add a new book now 😀 \n", active_color: :cyan) do |a|
+        a.choice '📚  Add a New Book'
+        a.choice '🏠  Main Menu'
+        a.choice ''
+        a.choice '❌  Exit'
+      end
+    else
+      counter = 0
+      while self.borrowed_books.length > counter
+        puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
+        pastel.cyan("Title: ") + "#{self.borrowed_books[counter].name}\n" +
+        pastel.cyan("Author: ") + "#{self.borrowed_books[counter].author}\n" +
+        pastel.cyan("Synopsis: ") + "#{self.borrowed_books[counter].synopsis}\n" +
+        pastel.cyan("Genre: ") + "#{self.borrowed_books[counter].genre}\n" +
+        pastel.cyan("ISBN Number: ") + "#{self.borrowed_books[counter].isbn_13}\n" +
+        pastel.cyan("Read Status: ") + "#{self.borrowed_book_reviews[counter].read_status}\n" +
+        pastel.cyan("Current Page Number: ") + "#{self.borrowed_book_reviews[counter].page_number}\n" +
+        pastel.cyan("My Rating: #{Cli.stars(self.borrowed_book_reviews[counter].rating)}\n") +
+        pastel.cyan("My Review: ") + "#{self.borrowed_book_reviews[counter].review}\n" +
+        pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
+        pastel.cyan("Book Owner: ") + "#{self.borrowed_book_reviews[counter].book.user.first_name}\n"
+        counter += 1
+        Cli.line
+        sleep 0.2
+      end
+      sleep 0.5
+      Cli.borrowed_books_names_inner_menu
     end
-    sleep 0.5
-    Cli.borrowed_books_names_inner_menu
   end
 
   def books
@@ -128,10 +162,14 @@ class User < ActiveRecord::Base
     # Called from ADD_NEW_BOOK_MENU
     prompt = TTY::Prompt.new
     pastel = Pastel.new
+    Cli.clear
+    Cli.bookcase
     Cli.quotation
     Cli.line
-    sleep 0.5
-
+    sleep 0.3
+    puts " Please type your answers below: "
+    sleep 0.3
+    Cli:line
     answers = prompt.collect do
       key(:book_name).ask('Title: ')
       key(:book_author).ask('Author: ')
@@ -142,7 +180,7 @@ class User < ActiveRecord::Base
       key(:page_num).ask('Current Page Number: ')
       key(:rating).slider('Rating: ', max: 5, step: 1, default: 3)
       key(:review).ask('Review: ')
-      key(:possession).select('Location: ') do |a|
+      key(:possession).select('Location: Is it on your bookshelf right now or is it somehwere else?') do |a|
         a.choice 'On The Shelf'
         a.choice 'Off The Shelf'
       end
@@ -156,18 +194,20 @@ class User < ActiveRecord::Base
     puts "Great! That book has been added to your library, take a look:"
     Cli.line
     sleep 0.5
-    puts "Title: #{answers[:book_name]}
-    Author: #{answers[:book_author]}
-    Synopsis: #{answers[:book_synopsis]}
-    Genre: #{answers[:genre]}
-    ISBN Number: #{answers[:book_isbn]}
-    Read Status: #{answers[:read_status]}
-    Current Page Number: #{answers[:page_num]}
-    My Rating: #{Cli.stars(answers[:rating])}
-    My Review: #{answers[:review]}
-    Current Location: #{answers[:possession]}\n"
+    puts pastel.cyan("Title: ") + "#{answers[:book_name]}\n" +
+    pastel.cyan("Author: ") + "#{answers[:book_author]}\n" +
+    pastel.cyan("Synopsis: ") + "#{answers[:book_synopsis]}\n" +
+    pastel.cyan("Genre: ") + "#{answers[:genre]}\n" +
+    pastel.cyan("ISBN Number: ") + "#{answers[:book_isbn]}\n" +
+    pastel.cyan("Read Status: ") + "#{answers[:read_status]}\n" +
+    pastel.cyan("Current Page Number: ") + "#{answers[:page_num]}\n" +
+    pastel.cyan("My Rating: ") + "#{Cli.stars(answers[:rating])}\n" +
+    pastel.cyan("My Review: ") + "#{answers[:review]}\n" +
+    pastel.cyan("Current Location: ") + "#{answers[:possession]}\n"
 
-    selection = prompt.select("Where to next?") do |a|
+    sleep 0.5
+
+    selection = prompt.select("Where to next?", active_color: :cyan) do |a|
       a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
@@ -185,37 +225,54 @@ class User < ActiveRecord::Base
   def select_book_to_edit
     # Called from MAIN_MENU
     prompt = TTY::Prompt.new
+    pastel = Pastel.new
+    Cli.clear
+    Cli.bookcase
+    Cli.quotation
+    Cli.line
     counter = 0
     while self.books.length > counter
-      puts "Book #{counter + 1}
-      Title: #{self.books[counter].name}
-      Author: #{self.books[counter].author}
-      Synopsis: #{self.books[counter].synopsis}
-      Genre: #{self.books[counter].genre}
-      ISBN Number: #{self.books[counter].isbn_13}
-      Read Status: #{self.reviews[counter].read_status}
-      Current Page Number: #{self.reviews[counter].page_number}
-      My Rating: #{Cli.stars(self.reviews[counter].rating)}
-      My Review: #{self.reviews[counter].review}
-      Current Location: #{self.reviews[counter].possession}\n"
+      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
+      pastel.cyan("Title: ") + "#{self.books[counter].name}\n" +
+      pastel.cyan("Author: ") + "#{self.books[counter].author}\n" +
+      pastel.cyan("Synopsis: ") + "#{self.books[counter].synopsis}\n" +
+      pastel.cyan("Genre: ") + "#{self.books[counter].genre}\n" +
+      pastel.cyan("ISBN Number: ") + "#{self.books[counter].isbn_13}\n" +
+      pastel.cyan("Read Status: ") + "#{self.reviews[counter].read_status}\n" +
+      pastel.cyan("Current Page Number: ") + "#{self.reviews[counter].page_number}\n" +
+      pastel.cyan("My Rating: ") + "#{Cli.stars(self.reviews[counter].rating)}\n" +
+      pastel.cyan("My Review: ") + "#{self.reviews[counter].review}\n" +
+      pastel.cyan("Current Location: ") + "#{self.reviews[counter].possession}\n"
       counter += 1
+      sleep 0.5
+      Cli.line
     end
-    answer = prompt.ask('Which book number would you like to edit?', convert: :int)
+    answer = prompt.ask('Which book number would you like to edit?')
+    Cli.line
     if answer == "exit"
-      exit
+      Cli.exit
     else
-      puts "You want to edit book number #{answer}"
-      book = self.books[answer-1]
-      review = self.reviews[answer-1]
-      update_book(book, review, answer)
+      confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
+        q.suffix'Yes/No'
+      end
+      if confirmation == true
+        Cli.line
+        book = self.books[answer-1]
+        review = self.reviews[answer-1]
+        update_book(book, review, answer)
+      else
+        puts "Okay, lets try again..."
+        Cli.line
+        select_book_to_edit
+      end
     end
   end
 
   def update_book(book, review, answer)
     # Called from SELECT_BOOK_TO_EDIT
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     puts "Great, we will be editing #{book.name}"
-
+    Cli.line
     selection = prompt.multi_select("Select all the fields you would like to update: ") do |a|
       a.choice 'Title'
       a.choice 'Author'
@@ -292,7 +349,7 @@ class User < ActiveRecord::Base
   #############################
   def update_personal_details
     # Called from ACCOUNT_PAGE
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     Cli.clear
     Cli.bookcase
     Cli.quotation
@@ -315,39 +372,39 @@ class User < ActiveRecord::Base
       else Cli.personal_details_inner_menu
       end
     else
-    selection.each do |choice|
-      case choice
-      when 'First Name'
-        c1 = prompt.ask('Enter your new first name: ')
-        self.first_name = c1
-      when 'Last Name'
-        c2 = prompt.ask('Enter your new last name: ')
-        self.last_name = c2
-      when 'E-Mail'
-        c3 = prompt.ask('Enter your new e-mail address: '){|q| q.validate :email}
-        self.email = c3
-      when 'Age'
-        c4 = prompt.ask('Enter your new age: ')
-        self.age = c4
+      selection.each do |choice|
+        case choice
+        when 'First Name'
+          c1 = prompt.ask('Enter your new first name: ')
+          self.first_name = c1
+        when 'Last Name'
+          c2 = prompt.ask('Enter your new last name: ')
+          self.last_name = c2
+        when 'E-Mail'
+          c3 = prompt.ask('Enter your new e-mail address: '){|q| q.validate :email}
+          self.email = c3
+        when 'Age'
+          c4 = prompt.ask('Enter your new age: ')
+          self.age = c4
+        end
+        self.save
       end
-      self.save
-    end
       Cli.line
       puts "Great, Thats been updated!"
       Cli.line
-    sleep 0.5
-    puts "Your new details are: \n
-    Name: #{self.first_name} #{self.last_name}
-    E-Mail: #{self.email}
-    Age: #{self.age}\n"
-    correct = prompt.yes?('Are these details now correct?') do |q|
-      q.suffix 'Yes/No'
+      sleep 0.5
+      puts "Your new details are: \n
+      Name: #{self.first_name} #{self.last_name}
+      E-Mail: #{self.email}
+      Age: #{self.age}\n"
+      correct = prompt.yes?('Are these details now correct?') do |q|
+        q.suffix 'Yes/No'
+      end
+      if correct == true
+        Cli.personal_details_inner_menu
+      else update_personal_details
+      end
     end
-    if correct == true
-      Cli.personal_details_inner_menu
-    else update_personal_details
-    end
-  end
   end
   ##############################
   def change_password

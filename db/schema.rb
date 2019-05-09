@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_09_080706) do
+ActiveRecord::Schema.define(version: 2019_05_09_205432) do
 
   create_table "books", force: :cascade do |t|
     t.string "name"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2019_05_09_080706) do
     t.string "last_name"
     t.string "email"
     t.integer "age"
+    t.boolean "found_egg", default: false
   end
 
 end

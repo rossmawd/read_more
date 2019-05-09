@@ -1,5 +1,7 @@
 class Cli < ActiveRecord::Base
 
+  $bounty_hunters = []
+
   require 'pry'
   ###################
   def self.bookcase
@@ -34,11 +36,12 @@ class Cli < ActiveRecord::Base
   def self.welcome
     font = TTY::Font.new(:standard)
     pastel = Pastel.new
+    clear
     puts pastel.cyan(font.write("Read More"))
   end
   ###################
   def self.start_menu
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     selection = prompt.select("") do |a|
       a.choice '📚  Create New Account'
       a.choice '📚  Login'
@@ -48,24 +51,27 @@ class Cli < ActiveRecord::Base
     case selection
     when '📚  Create New Account'
       line
-      sleep 0.5
+      sleep 0.2
       create_account
     when '📚  Login'
       line
-      sleep 0.5
+      sleep 0.2
       login_account
+    when ' '
+      start_menu
     when '❌  Exit'
       exit
     end
   end
   ###################
   def self.create_account
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     clear
     bookcase
     quotation
     line
     username = prompt.ask("✏️   Please enter a username: ")
+    line
 
     if username == "exit"
       start_menu
@@ -74,12 +80,13 @@ class Cli < ActiveRecord::Base
 
       puts "Hi, #{username}, It's nice to meet you!"
       sleep 1
+      line
       password = prompt.mask('🔐   Please create a your password: ')
       $current_user.update_password(password)
-
+      line
       puts " 💾  Password Set!"
       sleep 1
-
+      line
       puts "Now a few more steps to get you set up,"
       firstname = prompt.ask("✏️   Please enter your first name: ", required: true)
       lastname = prompt.ask("✏️   Please enter your last name: ", required: true)
@@ -87,8 +94,11 @@ class Cli < ActiveRecord::Base
       age = prompt.ask("✏️   Please enter your age: ", required: true)
 
       $current_user.update_user(firstname, lastname, e_mail, age)
-
       user = User.last
+      line
+      sleep 0.3
+      puts "Thanks #{self.first_name}, you are all set!"
+      sleep 2
       main_menu
     else
       choice = prompt.select("That username is already taken. Please choose another one or login.") do |a|
@@ -108,7 +118,7 @@ class Cli < ActiveRecord::Base
   end
   #################
   def self.login_account
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     clear
     bookcase
     quotation
@@ -117,7 +127,9 @@ class Cli < ActiveRecord::Base
     username = gets.chomp
     line
 
-    if User.find_by(user_name: username)
+    if username == "exit"
+      start_menu
+    elsif User.find_by(user_name: username)
       puts "Welcome Back #{username}!"
       line
       $current_user = User.find_by(user_name: username)
@@ -142,13 +154,14 @@ class Cli < ActiveRecord::Base
     line
     puts "Welcome Back inside your own personal library."
     line
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     selection = prompt.select("Where to next?") do |a|
       a.choice '📚  View Own Books'
       a.choice '📚  View Borrowed Books'
       a.choice '📚  Add a New Book'
       a.choice '📚  Edit a Book'
       a.choice '📚  Delete a Book'
+      a.choice '🏆  Top Users'
       a.choice '📚  My Account'
       a.choice ''
       a.choice '❌  Exit'
@@ -167,13 +180,17 @@ class Cli < ActiveRecord::Base
       $current_user.select_book_to_delete
     when '📚  My Account'
       account_page
+    when '🏆  Top Users'
+      top_hunters_page
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
   end
   #######################
   def self.books_names_inner_menu
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     line
     selection = prompt.select("Where to next?") do |a|
       a.choice '📚  Edit Book'
@@ -189,13 +206,15 @@ class Cli < ActiveRecord::Base
       $current_user.my_borrowed_books_list
     when '🏠  Main Menu'
       main_menu
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
   end
   ############################
   def self.borrowed_books_names_inner_menu
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     line
     selection = prompt.select("Where to next?") do |a|
       a.choice '📚  View Own Books'
@@ -208,6 +227,8 @@ class Cli < ActiveRecord::Base
       $current_user.my_books_list
     when '🏠  Main Menu'
       main_menu
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
@@ -215,7 +236,7 @@ class Cli < ActiveRecord::Base
   ############################
   def self.account_page
     # Called from MAIN_MENU
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     pastel = Pastel.new
     clear
     bookcase
@@ -237,6 +258,8 @@ class Cli < ActiveRecord::Base
       $current_user.change_password
     when '🏠  Main Menu'
       main_menu
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
@@ -244,7 +267,7 @@ class Cli < ActiveRecord::Base
   ############################
   def self.add_new_book_menu
     # Called from MAIN_MENU
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     clear
     bookcase
     selection = prompt.select("📚   Great, lets add a new book! How would you like to add the book?") do |a|
@@ -261,6 +284,8 @@ class Cli < ActiveRecord::Base
       ApiAccessor.get_input_and_search_api
     when '🏠  Main Menu'
       main_menu
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
@@ -286,7 +311,7 @@ class Cli < ActiveRecord::Base
   ############################
   def self.personal_details_inner_menu
     # Called from UPDATE_PERSONAL_DETAILS
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
     line
     selection = prompt.select("Where To Next?") do |a|
       a.choice '📚  Change My Password'
@@ -299,6 +324,8 @@ class Cli < ActiveRecord::Base
       $current_user.change_password
     when '🏠  Back to the Main Menu'
       main_menu
+    when ''
+      easter_egg
     when '❌  Exit'
       exit
     end
@@ -310,13 +337,69 @@ class Cli < ActiveRecord::Base
     quotation
     line
     pastel = Pastel.new
-    puts pastel.cyan("Until Next Time...")
+    prompt = TTY::Prompt.new
+    puts pastel.decorate("Thanks for visiting!", :cyan, :bold)
     line
-    📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍
+    puts "📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍"
+    line
+    puts pastel.decorate("Until Next Time...Live long and prosper 🖖 ", :cyan, :bold)
+    line
+    sleep 1
+    prompt.keypress("Thank-you and Goodbye :countdown ...", keys: [], timeout: 10)
+    clear
+  end
+  ############################
+  def self.print_egg_finders(egg_users)
+    pastel = Pastel.new
+    puts pastel.cyan("These users are the best as they have explored far and wide to find the hidden area, congratulations to you all!")
+    line
+    puts " 🏅  #{egg_users.join("\n")}"
+  end
+  ############################
+  ############################
+  def self.top_hunters_page
+    pastel = Pastel.new
+    prompt = TTY::Prompt.new
+    clear
+    bookcase
+    quotation
+    line
+    puts pastel.decorate("Top Users!", :magenta, :bold)
+    line
+    egg_users = User.all.select{|users| users.found_egg == true}.map{|user|user.user_name}
+    if egg_users.length > 0
+      print_egg_finders(egg_users)
+    else
+      puts pastel.cyan("There is a hidden area and you must search far and wide to join the table of top user.")
+      line
+      puts pastel.cyan("May the odds be ever in your favor.")
+    end
+    sleep 0.5
+    line
+    selection = prompt.select("") do |a|
+      a.choice '🏠  Main Menu'
+      a.choice ''
+      a.choice '❌  Exit'
+    end
+    case selection
+    when '🏠  Main Menu'
+      main_menu
+    when ''
+      easter_egg
+    when '❌  Exit'
+      exit
+    end
+  end
+  ############################
+  def self.add_user_to_found_egg
+    $current_user.found_egg = true
+    $current_user.save
   end
   ############################
   def self.easter_egg
     pastel = Pastel.new
+    add_user_to_found_egg
+    clear
     easter_fireworks
     clear
     line
@@ -324,11 +407,12 @@ class Cli < ActiveRecord::Base
     line
     facts
     line
+    line
     easter_menu
   end
   ############################
   def self.easter_menu
-    prompt = TTY::Prompt.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
   selection = prompt.select ("") do |a|
     a.choice '✨  More Facts'
     a.choice '🏠  Main Menu'
@@ -358,9 +442,9 @@ end
     pastel = Pastel.new
     puts pastel.red("              .''.
        .''.      .        *''*    :_\/_:     .
-      :_\/_:   _\(/_  .:.*_\/_*   : /\ :  .'.:.'.
+      :_\/_:   _(//_  .:.*_\/_*   : /\ :  .'.:.'.
   .''.: /\ :   ./)\   ':'* /\ * :  '..'.  -=:o:=-
- :_\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\/_:'.:::.    ' *''*    * '.\'/.' _ (/_'.':'.'
  : /\ : :::::     *_\/_*     -= o =-  /)\    '  *
   '..'  ':::'     * /\ *     .'/.\'.   '
       *            *..*         :
@@ -373,9 +457,9 @@ end
     pastel = Pastel.new
     puts pastel.blue("             .''.
        .''.      .        *''*    :_\/_:     .
-      :_\/_:   _\(/_  .:.*_\/_*   : /\ :  .'.:.'.
+      :_\/_:   _(//_  .:.*_\/_*   : /\ :  .'.:.'.
   .''.: /\ :   ./)\   ':'* /\ * :  '..'.  -=:o:=-
- :_\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\/_:'.:::.    ' *''*    * '.\'/.' _ (/_'.':'.'
  : /\ : :::::     *_\/_*     -= o =-  /)\    '  *
   '..'  ':::'     * /\ *     .'/.\'.   '
       *            *..*         :
@@ -388,9 +472,9 @@ end
     pastel = Pastel.new
     puts pastel.yellow("           .''.
        .''.      .        *''*    :_\/_:     .
-      :_\/_:   _\(/_  .:.*_\/_*   : /\ :  .'.:.'.
+      :_\/_:   _(//_  .:.*_\/_*   : /\ :  .'.:.'.
   .''.: /\ :   ./)\   ':'* /\ * :  '..'.  -=:o:=-
- :_\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\/_:'.:::.    ' *''*    * '.\'/.' _ (/_'.':'.'
  : /\ : :::::     *_\/_*     -= o =-  /)\    '  *
   '..'  ':::'     * /\ *     .'/.\'.   '
       *            *..*         :
@@ -403,9 +487,9 @@ end
     pastel = Pastel.new
     puts pastel.green("            .''.
        .''.      .        *''*    :_\/_:     .
-      :_\/_:   _\(/_  .:.*_\/_*   : /\ :  .'.:.'.
+      :_\/_:   _(//_  .:.*_\/_*   : /\ :  .'.:.'.
   .''.: /\ :   ./)\   ':'* /\ * :  '..'.  -=:o:=-
- :_\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\/_:'.:::.    ' *''*    * '.\'/.' _ (/_'.':'.'
  : /\ : :::::     *_\/_*     -= o =-  /)\    '  *
   '..'  ':::'     * /\ *     .'/.\'.   '
       *            *..*         :
