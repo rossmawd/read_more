@@ -16,6 +16,7 @@ class Cli < ActiveRecord::Base
       |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
       ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
     "
+    
   end
   ###################
   def self.clear
@@ -151,7 +152,7 @@ class Cli < ActiveRecord::Base
     bookcase
     quotation
     line
-    puts "Welcome Back inside your own personally library."
+    puts "Welcome Back inside your own personal library."
     line
     prompt = TTY::Prompt.new(active_color: :cyan)
     selection = prompt.select("Where to next?") do |a|

@@ -13,6 +13,13 @@ class ApiAccessor < ActiveRecord::Base
       genres == nil ? output = "No Genre found" : output = genres.join(", ")
       output
     end
+    
+    #HELP
+    def self.check_if_url_key_exists(index, api_result)
+      url = api_result["items"][index]["volumeInfo"]["previewLink"]
+      url == nil ? output = "No url found" : output = url
+      output
+    end
 
     #HELPER find's if the book has ISBN_13, else nil
     def self.find_isbn_13(index, api_result)
@@ -36,7 +43,7 @@ class ApiAccessor < ActiveRecord::Base
   # Displays the title, author, publishedDate for the top 3? results  
   def self.display_three_books(i = 0, api_result)
     3.times do
-        puts "Book #{i+1}"
+        puts Rainbow("Book #{i+1}").green
         puts "Title: #{api_result["items"][i]["volumeInfo"]["title"]}\n"
         #BELOW 3 lines to adjust for the key 'authors' not always existing
         authors = api_result["items"][i]["volumeInfo"]["authors"]
@@ -52,41 +59,60 @@ class ApiAccessor < ActiveRecord::Base
   #TTY inteface asking the user if they want to choose from 1st 3 books, or see 3 more
   def self.book_choice_menu(api_result)
     menu = TTY::Prompt.new
-  
-    selection = menu.select("What would you like to do?") do |a|
-      a.choice '📚  See the next 3 books'
-      a.choice '📚  Select one of these'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-    i = 3
-    case selection
-      when '📚  See the next 3 books'
-        bool = true
-        while bool
-          more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
-          puts more_than_nine
-          if i >= 9 then break end
+    bool = true
+    i = 3  #PLAYING
+    while bool
+      selection = menu.select("What would you like to do?") do |a|
+        a.choice '📚  See the next 3 books' #BROKEN
+        a.choice '📚  Add one of these to your library'
+        a.choice '📚  Search Again'
+        a.choice ''
+        a.choice '❌  Exit'
+      end  
+      case selection
+        when '📚  See the next 3 books'
 
-          display_three_books(i, api_result)
-          
-          book_loop = TTY::Prompt.new
-          bool = book_loop.yes?('Would you like to see more?')
-          i += 3
-        end
-      
-      when '📚  Select one of these'
-        #blank as it moves to next method anyway
-      when '❌  Exit'
-        exit
+            puts Rainbow("------------------------------------").blue
+            more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : Rainbow("Here are the next three:\n------------------------------------").blue
+            puts more_than_nine
+            if i >= 9 then break end
+            display_three_books(i, api_result)
+            
+            i += 3
+          #end
+        
+        when '📚  Add one of these to your library'
+          puts
+          #blank as it moves to next method anyway
+          break
+        when '📚  Search Again'
+          get_input_and_search_api
+          break
+        when '❌  Exit'
+          Cli.main_menu
+      end
     end
   end
 
   #The user then chooses the one they want to enter into their database:
   def self.book_choice
-    puts "Please enter a book\'s number to enter it into your library: "
+    puts Rainbow("Please enter a book\'s number to add it into your library: (or type 'quit' to go back)").blue
     choice = gets.chomp
-    choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
+    #binding.pry
+    if choice == "quit" 
+      Cli.main_menu 
+    elsif choice.to_i.class != Integer 
+      puts "Only numbers please !"
+      book_choice
+    elsif choice.to_i > 9 || choice.to_i < 1
+      puts "Choose book by typing number 1 to 9!"
+      book_choice
+    else 
+      puts "Sweet!"   #Will break if they don't give a number (1,2,3 etc) 
+      puts
+      choice.to_i
+    end
+    #choice
   end
 
   #Adds book (if not already owned) and creates a User_book instance
@@ -102,7 +128,7 @@ class ApiAccessor < ActiveRecord::Base
         user_id: user_id, 
         author: check_if_authors_key_exists(index, api_result), 
         isbn_13: find_isbn_13(index, api_result),
-        url: api_result["items"][index]["volumeInfo"]["previewLink"]
+        url: check_if_url_key_exists(index, api_result)
         )
       
       User_Book.create(
@@ -114,7 +140,8 @@ class ApiAccessor < ActiveRecord::Base
         user_id: user_id,
         possession: "",
        )
-        puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
+        puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!" 
+        puts
     else
       puts "You already own this book! Please select a new one!" 
     end
@@ -122,18 +149,24 @@ class ApiAccessor < ActiveRecord::Base
 
   #This method collects the user's search input and calls ALL other methods needed to add book via API
   def self.get_input_and_search_api
-    puts
+    Cli.clear
+    Cli.bookcase
     puts "-----------------------------------------------------"
-    puts "Please enter a book title or author name (or both!) 📚"
+    puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
+    puts "-----------------------------------------------------"
     answer = gets.chomp
-
+    #Rainbow("even bright underlined!").underline.bright
     puts 
     puts "Thanks! Searching for book... 🔍"
     puts             
 
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
+     
+    Cli.clear
+    Cli.bookcase
 
     puts "Books found! 😀  Here are the top 3:"
+    puts
     book_search_results = JSON.parse(result)
 
     display_three_books(i=0, book_search_results)
@@ -142,9 +175,14 @@ class ApiAccessor < ActiveRecord::Base
 
     search_again = TTY::Prompt.new
     bool = search_again.yes?('Would you like to search again?')
-
-    bool ? get_input_and_search_api : Cli.main_menu
-
+    
+    if bool
+      Cli.clear
+      get_input_and_search_api
+    else
+      Cli.clear
+      Cli.main_menu
+    end
   end
 
 end
