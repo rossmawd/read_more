@@ -76,7 +76,7 @@ class Cli < ActiveRecord::Base
       password = prompt.mask('🔐   Please create a your password: ')
       $current_user.update_password(password)
 
-      puts "Password Set!"
+      puts " 💾  Password Set!"
       sleep 1
 
       puts "Now a few more steps to get you set up,"
@@ -86,7 +86,7 @@ class Cli < ActiveRecord::Base
       age = prompt.ask("✏️   Please enter your age: ", required: true)
 
       $current_user.update_user(firstname, lastname, e_mail, age)
-      ### Confirm details with a recap and yes of no question
+      
       user = User.last
       main_menu
     else
@@ -176,14 +176,14 @@ class Cli < ActiveRecord::Base
     line
     selection = prompt.select("Where to next?") do |a|
       a.choice '📚  View Borrowed Books'
-      a.choice '📚  Main Menu'
+      a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
     case selection
     when '📚  View Borrowed Books'
       $current_user.my_borrowed_books_list
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       main_menu
     when '❌  Exit'
       exit
@@ -195,14 +195,14 @@ class Cli < ActiveRecord::Base
     line
     selection = prompt.select("Where to next?") do |a|
       a.choice '📚  View Own Books'
-      a.choice '📚  Main Menu'
+      a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
     case selection
     when '📚  View Own Books'
       $current_user.my_books_list
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       main_menu
     when '❌  Exit'
       exit
@@ -222,7 +222,7 @@ class Cli < ActiveRecord::Base
     selection = prompt.select("What would you like to do today?") do |a|
       a.choice '📚  Update My Personal Details'
       a.choice '📚  Change My Password'
-      a.choice '📚  Main Menu'
+      a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
@@ -231,7 +231,7 @@ class Cli < ActiveRecord::Base
       $current_user.update_personal_details
     when '📚  Change My Password'
       $current_user.change_password
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       main_menu
     when '❌  Exit'
       exit
@@ -246,7 +246,7 @@ class Cli < ActiveRecord::Base
     selection = prompt.select("📚   Great, lets add a new book! How would you like to add the book?") do |a|
       a.choice '📚  Add Manually'
       a.choice '📚  Search and Add'
-      a.choice '📚  Main Menu'
+      a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
@@ -255,7 +255,7 @@ class Cli < ActiveRecord::Base
       $current_user.add_a_new_book_manually
     when '📚  Search and Add'
       puts "You will be redirected to Ross's function"
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       main_menu
     when '❌  Exit'
       exit
@@ -284,17 +284,29 @@ class Cli < ActiveRecord::Base
     line
     selection = prompt.select("Where To Next?") do |a|
       a.choice '📚  Change My Password'
-      a.choice '📚  Back to the Main Menu'
+      a.choice '🏠  Back to the Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
     case selection
     when '📚  Change My Password'
       $current_user.change_password
-    when '📚  Back to the Main Menu'
+    when '🏠  Back to the Main Menu'
       main_menu
     when '❌  Exit'
       exit
     end
   end
+  ############################
+  def exit
+    clear
+    bookcase
+    quotation
+    line
+    pastel = Pastel.new
+    puts pastel.cyan"Until Next Time..."
+    line
+    📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍
+  end
+  ############################
 end
