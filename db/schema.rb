@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_08_093723) do
+ActiveRecord::Schema.define(version: 2019_05_09_080706) do
 
   create_table "books", force: :cascade do |t|
     t.string "name"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 2019_05_08_093723) do
     t.string "author"
     t.integer "isbn_13"
     t.string "genre"
+    t.text "url", default: "www.google.com"
+    t.integer "page_count", default: 0
   end
 
   create_table "user_books", force: :cascade do |t|
