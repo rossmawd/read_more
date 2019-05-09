@@ -175,12 +175,15 @@ class Cli < ActiveRecord::Base
     prompt = TTY::Prompt.new
     line
     selection = prompt.select("Where to next?") do |a|
+      a.choice '📚  Edit Book'
       a.choice '📚  View Borrowed Books'
       a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
     case selection
+    when '📚  Edit Book'
+      $current_user.select_book_to_edit
     when '📚  View Borrowed Books'
       $current_user.my_borrowed_books_list
     when '🏠  Main Menu'

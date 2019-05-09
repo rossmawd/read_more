@@ -127,6 +127,7 @@ class User < ActiveRecord::Base
   def add_a_new_book_manually
     # Called from ADD_NEW_BOOK_MENU
     prompt = TTY::Prompt.new
+    pastel = Pastel.new
     Cli.quotation
     Cli.line
     sleep 0.5
@@ -151,6 +152,7 @@ class User < ActiveRecord::Base
     book = Book.create(name: answers[:book_name], genre: answers[:genre], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
     review = User_Book.create(user_id: user.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
     sleep 0.5
+    Cli.line
     puts "Great! That book has been added to your library, take a look:"
     Cli.line
     sleep 0.5
