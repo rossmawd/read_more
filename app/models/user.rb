@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   def check_password
     # Called from LOGIN method
     prompt = TTY::Prompt.new
-    Cli.line
+
     password = prompt.mask('🔐   Please enter your password: ')
     if password == self.password
       puts "Welcome Back!"
@@ -40,6 +40,8 @@ class User < ActiveRecord::Base
   def my_books_list
     # Called from MAIN_MENU and BORROWED_BOOKS_INNER_MENU
     pastel = Pastel.new
+    Cli.clear
+    Cli.bookcase
     Cli.quotation
     Cli.line
     counter = 0
@@ -56,14 +58,17 @@ class User < ActiveRecord::Base
       pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
       pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
       counter += 1
+      sleep 0.2
     end
-    sleep 1
+    sleep 0.5
     Cli.books_names_inner_menu
   end
 
   def my_borrowed_books_list
     # Called from MAIN_MENU and OWN_BOOKS_INNER_MENU
     pastel = Pastel.new
+    Cli.clear
+    Cli.bookcase
     Cli.quotation
     Cli.line
     counter = 0
@@ -81,9 +86,10 @@ class User < ActiveRecord::Base
       pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
       pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
       counter += 1
+      sleep 0.2
     end
-    sleep 1
-    Cli.books_names_inner_menu
+    sleep 0.5
+    Cli.borrowed_books_names_inner_menu
   end
 
   def books
@@ -282,12 +288,28 @@ class User < ActiveRecord::Base
   def update_personal_details
     # Called from ACCOUNT_PAGE
     prompt = TTY::Prompt.new
+    Cli.clear
+    Cli.bookcase
+    Cli.quotation
+    Cli.line
+    puts "Lets change things up!"
+    Cli.line
     selection = prompt.multi_select("Select the fields you would like to update: ") do |a|
       a.choice 'First Name'
       a.choice 'Last Name'
       a.choice 'E-Mail'
       a.choice 'Age'
     end
+    if selection.length == 0
+      Cli.line
+      huh = prompt.yes?('No Options Selected, would you like to try again?') do |q|
+        q.suffix 'Yes/No'
+      end
+      if huh == true
+        update_personal_details
+      else Cli.personal_details_inner_menu
+      end
+    else
     selection.each do |choice|
       case choice
       when 'First Name'
@@ -305,7 +327,9 @@ class User < ActiveRecord::Base
       end
       self.save
     end
-    puts "Great, Thats been updated!"
+      Cli.line
+      puts "Great, Thats been updated!"
+      Cli.line
     sleep 0.5
     puts "Your new details are: \n
     Name: #{self.first_name} #{self.last_name}
@@ -318,6 +342,7 @@ class User < ActiveRecord::Base
       Cli.personal_details_inner_menu
     else update_personal_details
     end
+  end
   end
   ##############################
   def change_password

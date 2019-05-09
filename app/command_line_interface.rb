@@ -16,6 +16,10 @@ class Cli < ActiveRecord::Base
     "
   end
   ###################
+  def self.clear
+    system('clear')
+  end
+  ###################
   def self.line
     puts ""
   end
@@ -56,9 +60,11 @@ class Cli < ActiveRecord::Base
   ###################
   def self.create_account
     prompt = TTY::Prompt.new
-    puts "✏️   Please enter a username: "
-
-    username = gets.chomp
+    clear
+    bookcase
+    quotation
+    line
+    username = prompt.ask("✏️   Please enter a username: ")
 
     if username == "exit"
       start_menu
@@ -89,7 +95,7 @@ class Cli < ActiveRecord::Base
         a.choice 'Login'
         a.choice 'Start Menu'
       end
-      case selection
+      case choice
       when 'Choose a new username'
         create_account
       when 'Login'
@@ -102,9 +108,13 @@ class Cli < ActiveRecord::Base
   #################
   def self.login_account
     prompt = TTY::Prompt.new
-
+    clear
+    bookcase
+    quotation
+    line
     puts "✏️   Please enter a username: "
     username = gets.chomp
+    line
 
     if User.find_by(user_name: username)
       puts "Welcome Back #{username}!"
@@ -125,6 +135,9 @@ class Cli < ActiveRecord::Base
   end
   #################
   def self.main_menu
+    clear
+    bookcase
+    quotation
     line
     puts "Welcome Back inside your own personally library."
     line
@@ -188,7 +201,7 @@ class Cli < ActiveRecord::Base
     end
     case selection
     when '📚  View Own Books'
-      my_books_list
+      $current_user.my_books_list
     when '📚  Main Menu'
       main_menu
     when '❌  Exit'
@@ -200,6 +213,8 @@ class Cli < ActiveRecord::Base
     # Called from MAIN_MENU
     prompt = TTY::Prompt.new
     pastel = Pastel.new
+    clear
+    bookcase
     quotation
     line
     puts "Hello #{$current_user.user_name}\n"
@@ -226,6 +241,8 @@ class Cli < ActiveRecord::Base
   def self.add_new_book_menu
     # Called from MAIN_MENU
     prompt = TTY::Prompt.new
+    clear
+    bookcase
     selection = prompt.select("📚   Great, lets add a new book! How would you like to add the book?") do |a|
       a.choice '📚  Add Manually'
       a.choice '📚  Search and Add'

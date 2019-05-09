@@ -8,11 +8,10 @@ pastel = Pastel.new
 Cli.welcome
 Cli.bookcase
 
-puts "Hello and welcome to your bookcase!"
 Cli.line
-sleep 1
+sleep 0.5
 Cli.quotation
 sleep 0.5
 Cli.line
-puts "Lets get started: "
+# puts "Lets get started: "
 Cli.start_menu
