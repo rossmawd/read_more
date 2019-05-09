@@ -432,19 +432,24 @@ class User < ActiveRecord::Base
   def delete_book(book_instance, review_instance)
 
     if self.books.include?(book_instance)
+      puts
+      Cli.clear
       book_loop = TTY::Prompt.new
-      bool = book_loop.yes?('Are you *sure* you want to delete?')
+      bool = book_loop.yes?("Are you *sure* you want to delete '#{book_instance.name}'?")
       if bool
         book_id = book_instance.id
         book_instance.destroy
         puts "#{book_instance.name} deleted from your Library!"
         user_book =  review_instance
         user_book.destroy
+        Cli.main_menu
       else
         puts "Delete Cancelled!"
+        Cli.main_menu
       end
     else
       puts "You do not own this book!"
+      Cli.main_menu 
     end
   end
 
@@ -466,6 +471,8 @@ class User < ActiveRecord::Base
       # Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
     end
+    puts "---------------------------------------------------------"
+    puts
     answer = prompt.ask('Which book number would you like to delete?', convert: :int)
     book = self.books[answer-1]
     review = self.reviews[answer-1]
