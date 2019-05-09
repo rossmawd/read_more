@@ -43,7 +43,7 @@ class ApiAccessor < ActiveRecord::Base
   # Displays the title, author, publishedDate for the top 3? results  
   def self.display_three_books(i = 0, api_result)
     3.times do
-        puts "Book #{i+1}"
+        puts Rainbow("Book #{i+1}").green
         puts "Title: #{api_result["items"][i]["volumeInfo"]["title"]}\n"
         #BELOW 3 lines to adjust for the key 'authors' not always existing
         authors = api_result["items"][i]["volumeInfo"]["authors"]
@@ -72,8 +72,8 @@ class ApiAccessor < ActiveRecord::Base
       case selection
         when '📚  See the next 3 books'
 
-            puts "------------------------------------"
-            more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
+            puts Rainbow("------------------------------------").blue
+            more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : Rainbow("Here are the next three:\n------------------------------------").blue
             puts more_than_nine
             if i >= 9 then break end
             display_three_books(i, api_result)
@@ -96,7 +96,7 @@ class ApiAccessor < ActiveRecord::Base
 
   #The user then chooses the one they want to enter into their database:
   def self.book_choice
-    puts "Please enter a book\'s number to add it into your library: (or type 'quit' to go back) "
+    puts Rainbow("Please enter a book\'s number to add it into your library: (or type 'quit' to go back)").blue
     choice = gets.chomp
     #binding.pry
     if choice == "quit" 
@@ -109,6 +109,7 @@ class ApiAccessor < ActiveRecord::Base
       book_choice
     else 
       puts "Sweet!"   #Will break if they don't give a number (1,2,3 etc) 
+      puts
       choice.to_i
     end
     #choice
@@ -139,7 +140,8 @@ class ApiAccessor < ActiveRecord::Base
         user_id: user_id,
         possession: "",
        )
-        puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
+        puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!" 
+        puts
     else
       puts "You already own this book! Please select a new one!" 
     end
@@ -148,11 +150,12 @@ class ApiAccessor < ActiveRecord::Base
   #This method collects the user's search input and calls ALL other methods needed to add book via API
   def self.get_input_and_search_api
     Cli.clear
+    Cli.bookcase
     puts "-----------------------------------------------------"
-    puts Rainbow("Please enter a book title or author name (or both!) 📚").blue
+    puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
     puts "-----------------------------------------------------"
     answer = gets.chomp
-
+    #Rainbow("even bright underlined!").underline.bright
     puts 
     puts "Thanks! Searching for book... 🔍"
     puts             
@@ -160,6 +163,7 @@ class ApiAccessor < ActiveRecord::Base
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
      
     Cli.clear
+    Cli.bookcase
 
     puts "Books found! 😀  Here are the top 3:"
     puts
@@ -171,6 +175,7 @@ class ApiAccessor < ActiveRecord::Base
 
     search_again = TTY::Prompt.new
     bool = search_again.yes?('Would you like to search again?')
+    
     if bool
       Cli.clear
       get_input_and_search_api
