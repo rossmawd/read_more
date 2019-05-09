@@ -254,8 +254,9 @@ class Cli < ActiveRecord::Base
     when '📚  Add Manually'
       $current_user.add_a_new_book_manually
     when '📚  Search and Add'
-      puts "You will be redirected to Ross's function"
-    when '🏠  Main Menu'
+      #puts "You will be redirected to Ross's function"
+      ApiAccessor.get_input_and_search_api
+    when '📚  Main Menu'
       main_menu
     when '❌  Exit'
       exit
