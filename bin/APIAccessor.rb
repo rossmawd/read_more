@@ -106,6 +106,17 @@ def add_new_book_from_api(book_choice, user_id, api_result)
       author: check_if_authors_key_exists(index, api_result), 
       isbn_13: find_isbn_13(index, api_result)
       )
+    
+    User_Book.create(
+      review: ""
+      rating: 
+      page_number:
+      read_status:
+      book_id: #How do I get this?
+      user_id: user_id
+      possession: 
+      
+    )
       puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
   else
     puts "You already own this book! Please select a new one!" #NEED TO LOOP!
