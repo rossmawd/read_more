@@ -13,6 +13,13 @@ class ApiAccessor < ActiveRecord::Base
       genres == nil ? output = "No Genre found" : output = genres.join(", ")
       output
     end
+    
+    #HELP
+    def self.check_if_url_key_exists(index, api_result)
+      url = api_result["items"][index]["volumeInfo"]["previewLink"]
+      url == nil ? output = "No url found" : output = url
+      output
+    end
 
     #HELPER find's if the book has ISBN_13, else nil
     def self.find_isbn_13(index, api_result)
@@ -102,7 +109,7 @@ class ApiAccessor < ActiveRecord::Base
         user_id: user_id, 
         author: check_if_authors_key_exists(index, api_result), 
         isbn_13: find_isbn_13(index, api_result),
-        url: api_result["items"][index]["volumeInfo"]["previewLink"]
+        url: check_if_url_key_exists(index, api_result)
         )
       
       User_Book.create(

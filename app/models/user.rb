@@ -454,7 +454,7 @@ class User < ActiveRecord::Base
       # ISBN Number: #{self.books[counter].isbn_13}
       # Read Status: #{self.reviews[counter].read_status}
       # Current Page Number: #{self.reviews[counter].page_number}
-      # My Rating: #{stars(self.reviews[counter].rating)}
+      # My Rating: #{Cli.stars(self.reviews[counter].rating)}
       # My Review: #{self.reviews[counter].review}
       # Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
