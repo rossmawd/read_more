@@ -265,6 +265,8 @@ class Cli < ActiveRecord::Base
   def self.stars(number)
     rate = number.to_i
     case rate
+    when 0
+      " 💩 "
     when 1
        " ⭐ "
     when 2
