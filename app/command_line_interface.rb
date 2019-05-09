@@ -5,14 +5,14 @@ class Cli < ActiveRecord::Base
   def self.bookcase
     pastel = Pastel.new
     puts pastel.cyan"
-    .--.           .---.        .-.
-    .---|--|   .-.     | A |  .---. |~|    .--.
-    .--|===|Ch|---|_|--.__| S |--|:::| |~|-==-|==|---.
-    |%%|NT2|oc|===| |~~|%%| C |--|   |_|~|CATS|  |___|-.
-    |  |   |ah|===| |==|  | I |  |:::|=| |    |GB|---|=|
-    |  |   |ol|   |_|__|  | I |__|   | | |    |  |___| |
-    |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
-    ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
+             .--.           .---.        .-.
+         .---|--|   .-.     | A |  .---. |~|    .--.
+      .--|===|Ch|---|_|--.__| S |--|:::| |~|-==-|==|---.
+      |%%|NT2|oc|===| |~~|%%| C |--|   |_|~|CATS|  |___|-.
+      |  |   |ah|===| |==|  | I |  |:::|=| |    |GB|---|=|
+      |  |   |ol|   |_|__|  | I |__|   | | |    |  |___| |
+      |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
+      ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
     "
   end
   ###################
@@ -306,17 +306,43 @@ class Cli < ActiveRecord::Base
     quotation
     line
     pastel = Pastel.new
-    puts pastel.cyan"Until Next Time..."
+    puts pastel.cyan("Until Next Time...")
     line
     📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍 📚 👍
   end
   ############################
   def self.easter_egg
+    pastel = Pastel.new
     easter_fireworks
     clear
-    puts " Congrats on finding the hidden area...Thanks for using our app, we hope you are enjoying it as much as we enjoyed building it! \n Here are some fun facts for you to look over!\n Enjoy! \n Lauren and Ross"
+    line
+    puts pastel.magenta("Congrats on finding the hidden area...Thanks for using our app, we hope you are enjoying it as much as we enjoyed building it! \n Continue being a life long learner, and remember the only race is with yourself! \n \nHere are some fun facts for you to look over!\n Enjoy! \n Lauren and Ross")
+    line
     facts
+    line
+    easter_menu
   end
+  ############################
+  def self.easter_menu
+    prompt = TTY::Prompt.new
+  selection = prompt.select ("") do |a|
+    a.choice '✨  More Facts'
+    a.choice '🏠  Main Menu'
+    a.choice '❌  Exit'
+  end
+  case selection
+  when
+    '✨  More Facts'
+    facts
+    easter_menu
+  when
+    '🏠  Main Menu'
+    main_menu
+  when
+    '❌  Exit'
+    exit
+  end
+end
   ############################
   def self.facts
     pastel = Pastel.new

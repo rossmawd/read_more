@@ -175,7 +175,6 @@ class User < ActiveRecord::Base
     when '🏠  Main Menu'
       Cli.main_menu
     when ''
-      
     when '❌  Exit'
       Cli.exit
     end
