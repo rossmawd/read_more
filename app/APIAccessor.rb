@@ -158,6 +158,7 @@ class ApiAccessor < ActiveRecord::Base
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
 
     puts "Books found! 😀  Here are the top 3:"
+    puts
     book_search_results = JSON.parse(result)
 
     display_three_books(i=0, book_search_results)
