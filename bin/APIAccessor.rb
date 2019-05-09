@@ -130,7 +130,7 @@ def get_input_and_search_api
   display_three_books(i=0, book_search_results)
   book_choice_menu(book_search_results)
   add_new_book_from_api(book_choice,3, book_search_results)
-  #########add_new_book_menu
+  Cli.add_new_book_menu
 
 end
 
