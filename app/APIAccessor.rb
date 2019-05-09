@@ -59,41 +59,58 @@ class ApiAccessor < ActiveRecord::Base
   #TTY inteface asking the user if they want to choose from 1st 3 books, or see 3 more
   def self.book_choice_menu(api_result)
     menu = TTY::Prompt.new
-  
-    selection = menu.select("What would you like to do?") do |a|
-      a.choice '📚  See the next 3 books'
-      a.choice '📚  Select one of these'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-    i = 3
-    case selection
-      when '📚  See the next 3 books'
-        bool = true
-        while bool
-          more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
-          puts more_than_nine
-          if i >= 9 then break end
+    bool = true
+    i = 3  #PLAYING
+    while bool
+      selection = menu.select("What would you like to do?") do |a|
+        a.choice '📚  See the next 3 books' #BROKEN
+        a.choice '📚  Add one of these to your library'
+        a.choice '📚  Search Again'
+        a.choice ''
+        a.choice '❌  Exit'
+      end  
+      case selection
+        when '📚  See the next 3 books'
 
-          display_three_books(i, api_result)
-          
-          book_loop = TTY::Prompt.new
-          bool = book_loop.yes?('Would you like to see more?')
-          i += 3
-        end
-      
-      when '📚  Select one of these'
-        #blank as it moves to next method anyway
-      when '❌  Exit'
-        exit
+            puts "------------------------------------"
+            more_than_nine = i >= 9 ? "Sorry, 9 results is the max! Please search again.\n\n" : "Here are the next three:\n-------------------------------"
+            puts more_than_nine
+            if i >= 9 then break end
+            display_three_books(i, api_result)
+            
+            i += 3
+          #end
+        
+        when '📚  Add one of these to your library'
+          #blank as it moves to next method anyway
+          break
+        when '📚  Search Again'
+          get_input_and_search_api
+          break
+        when '❌  Exit'
+          Cli.main_menu
+      end
     end
   end
 
   #The user then chooses the one they want to enter into their database:
   def self.book_choice
-    puts "Please enter a book\'s number to enter it into your library: "
+    puts "Please enter a book\'s number to enter it into your library: (or type 'quit' to go back) "
     choice = gets.chomp
-    choice = choice.to_i   #Will break if they don't give a number (1,2,3 etc) 
+    #binding.pry
+    if choice == "quit" 
+      Cli.main_menu 
+    elsif choice.to_i.class != Integer 
+      puts "Only numbers please !"
+      book_choice
+    elsif choice.to_i > 9 || choice.to_i < 1
+      puts "Choose book by typing number 1 to 9!"
+      book_choice
+    else 
+      puts "Sweet!"   #Will break if they don't give a number (1,2,3 etc) 
+      choice.to_i
+    end
+    #choice
   end
 
   #Adds book (if not already owned) and creates a User_book instance
