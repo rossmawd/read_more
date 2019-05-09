@@ -50,7 +50,8 @@ class User < ActiveRecord::Base
       pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
       pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
       pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
-      pastel.cyan("My Rating: ")+self.stars+"\n"+
+      pastel.cyan("My Rating: ") + "#{stars(self.reviews[counter].rating)}\n" +
+      pastel.cyan("My Rating: ") + "#{self.reviews[counter].rating}\n" +
       pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
       pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
       counter += 1
@@ -59,8 +60,8 @@ class User < ActiveRecord::Base
     books_names_inner_menu
   end
 
-  def stars
-    rate = self.reviews.select{|reviews| reviews.rating}
+  def stars(number)
+    rate = number
     case rate
     when 1
       puts " ⭐ "

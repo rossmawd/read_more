@@ -16,5 +16,4 @@ puts "\"#{$quotes.sample}\""
 sleep 0.5
 line
 puts "Lets get started: "
-line
 start_menu
