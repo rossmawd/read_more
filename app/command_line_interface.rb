@@ -63,12 +63,12 @@ class Cli < ActiveRecord::Base
     if username == "exit"
       start_menu
     elsif !User.find_by(user_name: username)
-      user = User.create(user_name: username)
+      $current_user = User.create(user_name: username)
 
       puts "Hi, #{username}, It's nice to meet you!"
       sleep 1
       password = prompt.mask('🔐   Please create a your password: ')
-      user.update_password(password)
+      $current_user.update_password(password)
 
       puts "Password Set!"
       sleep 1
@@ -79,7 +79,7 @@ class Cli < ActiveRecord::Base
       e_mail = prompt.ask('✏️   What is your email?'){|q| q.validate :email}
       age = prompt.ask("✏️   Please enter your age: ", required: true)
 
-      user.update_user(firstname, lastname, e_mail, age)
+      $current_user.update_user(firstname, lastname, e_mail, age)
       ### Confirm details with a recap and yes of no question
       user = User.last
       main_menu
@@ -109,8 +109,8 @@ class Cli < ActiveRecord::Base
     if User.find_by(user_name: username)
       puts "Welcome Back #{username}!"
       line
-      user = User.find_by(user_name: username)
-      user.check_password
+      $current_user = User.find_by(user_name: username)
+      $current_user.check_password
     else
       choice = prompt.select("Sorry, I can't find that username. Would you like to try again?") do |a|
         a.choice 'Try Again'
@@ -142,18 +142,17 @@ class Cli < ActiveRecord::Base
 
     case selection
     when '📚  View Own Books'
-      my_books_list
+      $current_user.my_books_list
     when '📚  View Borrowed Books'
-      my_borrowed_books_list
+      $current_user.my_borrowed_books_list
     when '📚  Add a New Book'
       add_new_book_menu
     when '📚  Edit a Book'
-      select_book_to_edit
+      $current_user.select_book_to_edit
     when '📚  Delete a Book'
-      select_book_to_delete
+      $current_user.select_book_to_delete
     when '📚  My Account'
-      puts "Here you will be able to see account informaiton and make changes"
-      main_menu
+      account_page
     when '❌  Exit'
       exit
     end
@@ -170,7 +169,7 @@ class Cli < ActiveRecord::Base
     end
     case selection
     when '📚  View Borrowed Books'
-      my_borrowed_books_list
+      $current_user.my_borrowed_books_list
     when '📚  Main Menu'
       main_menu
     when '❌  Exit'
@@ -201,9 +200,9 @@ class Cli < ActiveRecord::Base
     # Called from MAIN_MENU
     prompt = TTY::Prompt.new
     pastel = Pastel.new
-    puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
+    quotation
     line
-    puts "Hello #{self.user_name}\n"
+    puts "Hello #{$current_user.user_name}\n"
     line
     selection = prompt.select("What would you like to do today?") do |a|
       a.choice '📚  Update My Personal Details'
@@ -214,9 +213,9 @@ class Cli < ActiveRecord::Base
     end
     case selection
     when '📚  Update My Personal Details'
-      update_personal_details
+      $current_user.update_personal_details
     when '📚  Change My Password'
-      change_password
+      $current_user.change_password
     when '📚  Main Menu'
       main_menu
     when '❌  Exit'
@@ -236,7 +235,7 @@ class Cli < ActiveRecord::Base
     end
     case selection
     when '📚  Add Manually'
-      add_a_new_book_manually
+      $current_user.add_a_new_book_manually
     when '📚  Search and Add'
       puts "You will be redirected to Ross's function"
     when '📚  Main Menu'
@@ -247,7 +246,7 @@ class Cli < ActiveRecord::Base
   end
   ############################
   def self.stars(number)
-    rate = number
+    rate = number.to_i
     case rate
     when 1
        " ⭐ "
@@ -274,7 +273,7 @@ class Cli < ActiveRecord::Base
     end
     case selection
     when '📚  Change My Password'
-      change_password
+      $current_user.change_password
     when '📚  Back to the Main Menu'
       main_menu
     when '❌  Exit'
