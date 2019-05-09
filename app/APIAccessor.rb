@@ -82,6 +82,7 @@ class ApiAccessor < ActiveRecord::Base
           #end
         
         when '📚  Add one of these to your library'
+          puts
           #blank as it moves to next method anyway
           break
         when '📚  Search Again'
@@ -146,9 +147,10 @@ class ApiAccessor < ActiveRecord::Base
 
   #This method collects the user's search input and calls ALL other methods needed to add book via API
   def self.get_input_and_search_api
-    puts
+    Cli.clear
     puts "-----------------------------------------------------"
-    puts "Please enter a book title or author name (or both!) 📚"
+    puts Rainbow("Please enter a book title or author name (or both!) 📚").blue
+    puts "-----------------------------------------------------"
     answer = gets.chomp
 
     puts 
@@ -156,6 +158,8 @@ class ApiAccessor < ActiveRecord::Base
     puts             
 
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
+     
+    Cli.clear
 
     puts "Books found! 😀  Here are the top 3:"
     puts
