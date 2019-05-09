@@ -164,13 +164,13 @@ class User < ActiveRecord::Base
     Current Location: #{answers[:possession]}\n"
 
     selection = prompt.select("Where to next?") do |a|
-      a.choice '📚  Main Menu'
+      a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
     end
 
     case selection
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       Cli.main_menu
     when '❌  Exit'
       exit

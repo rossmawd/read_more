@@ -86,7 +86,7 @@ class Cli < ActiveRecord::Base
       age = prompt.ask("✏️   Please enter your age: ", required: true)
 
       $current_user.update_user(firstname, lastname, e_mail, age)
-      
+
       user = User.last
       main_menu
     else
@@ -254,9 +254,8 @@ class Cli < ActiveRecord::Base
     when '📚  Add Manually'
       $current_user.add_a_new_book_manually
     when '📚  Search and Add'
-      #puts "You will be redirected to Ross's function"
       ApiAccessor.get_input_and_search_api
-    when '📚  Main Menu'
+    when '🏠  Main Menu'
       main_menu
     when '❌  Exit'
       exit
