@@ -16,14 +16,14 @@ class User < ActiveRecord::Base
   def check_password
     # Called from LOGIN method
     prompt = TTY::Prompt.new
-    line
+    Cli.line
     password = prompt.mask('🔐   Please enter your password: ')
     if password == self.password
       puts "Welcome Back!"
       user = self
-      main_menu
+      cli.main_menu
     else
-      line
+      cli.line
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
         a.choice 'Back to the Start Menu'
@@ -31,8 +31,8 @@ class User < ActiveRecord::Base
       if choice == 'Try Again'
         check_password
       elsif choice == 'Back to the Start Menu'
-        line
-        start_menu
+        cli.line
+        cli.start_menu
       end
     end
   end
@@ -40,8 +40,8 @@ class User < ActiveRecord::Base
   def my_books_list
     # Called from MAIN_MENU and BORROWED_BOOKS_INNER_MENU
     pastel = Pastel.new
-    puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
-    line
+    Cli.quotation
+    Cli.line
     counter = 0
     while self.books.length > counter
       puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
@@ -52,36 +52,20 @@ class User < ActiveRecord::Base
       pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
       pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
       pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
-      pastel.cyan("My Rating: #{stars(self.reviews[counter].rating)}\n") +
+      pastel.cyan("My Rating: #{Cli.stars(self.reviews[counter].rating)}\n") +
       pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
       pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
       counter += 1
     end
     sleep 1
-    books_names_inner_menu
-  end
-
-  def stars(number)
-    rate = number
-    case rate
-    when 1
-       " ⭐ "
-    when 2
-       " ⭐ ⭐ "
-    when 3
-       " ⭐ ⭐ ⭐ "
-    when 4
-       " ⭐ ⭐ ⭐ ⭐ "
-    when 5
-       " ⭐ ⭐ ⭐ ⭐ ⭐ "
-    end
+    Cli.books_names_inner_menu
   end
 
   def my_borrowed_books_list
     # Called from MAIN_MENU and OWN_BOOKS_INNER_MENU
     pastel = Pastel.new
-    puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
-    line
+    Cli.quotation
+    Cli.line
     counter = 0
     while self.borrowed_books.length > counter
       puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
@@ -92,14 +76,14 @@ class User < ActiveRecord::Base
       pastel.cyan("ISBN Number: ") + "#{self.borrowed_books[counter].isbn_13}\n" +
       pastel.cyan("Read Status: ") + "#{self.borrowed_book_reviews[counter].read_status}\n" +
       pastel.cyan("Current Page Number: ") + "#{self.borrowed_book_reviews[counter].page_number}\n" +
-      pastel.cyan("My Rating: #{stars(self.borrowed_book_reviews[counter].rating)}\n") +
+      pastel.cyan("My Rating: #{Cli.stars(self.borrowed_book_reviews[counter].rating)}\n") +
       pastel.cyan("My Review: ") + "#{self.borrowed_book_reviews[counter].review}\n" +
       pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
       pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
       counter += 1
     end
     sleep 1
-    books_names_inner_menu
+    Cli.books_names_inner_menu
   end
 
   def books
@@ -132,33 +116,11 @@ class User < ActiveRecord::Base
     self.borrowed_books.map{|books| books.name}.join(", ")
   end
 
-  def add_new_book_menu
-    # Called from MAIN_MENU
-    prompt = TTY::Prompt.new
-    selection = prompt.select("📚   Great, lets add a new book! How would you like to add the book?") do |a|
-      a.choice '📚  Add Manually'
-      a.choice '📚  Search and Add'
-      a.choice '📚  Main Menu'
-      a.choice ''
-      a.choice '❌  Exit'
-    end
-    case selection
-    when '📚  Add Manually'
-      add_a_new_book_manually
-    when '📚  Search and Add'
-      puts "You will be redirected to Ross's function"
-    when '📚  Main Menu'
-      main_menu
-    when '❌  Exit'
-      exit
-    end
-  end
-
   def add_a_new_book_manually
     # Called from ADD_NEW_BOOK_MENU
     prompt = TTY::Prompt.new
-    puts $quotes.sample
-
+    Cli.quote
+    Cli.line
     sleep 0.5
 
     answers = prompt.collect do
@@ -182,17 +144,16 @@ class User < ActiveRecord::Base
     review = User_Book.create(user_id: user.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
     sleep 0.5
     puts "Great! That book has been added to your library, take a look:"
-
+    Cli.line
     sleep 0.5
-
     puts "Title: #{answers[:book_name]}
-    Author: #{answer[:book_author]}
-    Synopsis: #{answer[:book_synopsis]}
-    Genre: #{answer[:genre]}
-    ISBN Number: #{answer[:book_isbn]}
+    Author: #{answers[:book_author]}
+    Synopsis: #{answers[:book_synopsis]}
+    Genre: #{answers[:genre]}
+    ISBN Number: #{answers[:book_isbn]}
     Read Status: #{answers[:read_status]}
     Current Page Number: #{answers[:page_num]}
-    My Rating: #{stars(answers[:rating])} pastel.cyan("My Rating:
+    My Rating: #{Cli.stars(answers[:rating])}
     My Review: #{answers[:review]}
     Current Location: #{answers[:possession]}\n"
 
@@ -204,7 +165,7 @@ class User < ActiveRecord::Base
 
     case selection
     when '📚  Main Menu'
-      main_menu
+      Cli.main_menu
     when '❌  Exit'
       exit
     end
@@ -223,7 +184,7 @@ class User < ActiveRecord::Base
       ISBN Number: #{self.books[counter].isbn_13}
       Read Status: #{self.reviews[counter].read_status}
       Current Page Number: #{self.reviews[counter].page_number}
-      My Rating: #{stars(self.reviews[counter].rating)}
+      My Rating: #{Cli.stars(self.reviews[counter].rating)}
       My Review: #{self.reviews[counter].review}
       Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
@@ -310,11 +271,11 @@ class User < ActiveRecord::Base
     ISBN Number: #{self.books[locator].isbn_13}
     Read Status: #{self.reviews[locator].read_status}
     Current Page Number: #{self.reviews[locator].page_number}
-    My Rating: #{stars(self.reviews[locator].rating)}
+    My Rating: #{Cli.stars(self.reviews[locator].rating)}
     My Review: #{self.reviews[locator].review}
     Current Location: #{self.reviews[locator].possession}\n"
     sleep 0.5
-    main_menu
+    Cli.main_menu
   end
   #############################
   def update_personal_details
@@ -353,8 +314,8 @@ class User < ActiveRecord::Base
       q.suffix 'Yes/No'
     end
     if correct == "Yes"
-      personal_details_inner_menu
-    else update_name
+      Cli.personal_details_inner_menu
+    else update_personal_details
     end
   end
   ##############################
@@ -374,7 +335,7 @@ class User < ActiveRecord::Base
       if choice == 'Try Again'
         change_password
       elsif choice == 'Back to the Account Menu'
-        account_page
+        Cli.account_page
       end
     end
   end
