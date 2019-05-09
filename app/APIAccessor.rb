@@ -95,7 +95,7 @@ class ApiAccessor < ActiveRecord::Base
 
   #The user then chooses the one they want to enter into their database:
   def self.book_choice
-    puts "Please enter a book\'s number to enter it into your library: (or type 'quit' to go back) "
+    puts "Please enter a book\'s number to add it into your library: (or type 'quit' to go back) "
     choice = gets.chomp
     #binding.pry
     if choice == "quit" 
@@ -158,6 +158,7 @@ class ApiAccessor < ActiveRecord::Base
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
 
     puts "Books found! 😀  Here are the top 3:"
+    puts
     book_search_results = JSON.parse(result)
 
     display_three_books(i=0, book_search_results)
@@ -166,9 +167,13 @@ class ApiAccessor < ActiveRecord::Base
 
     search_again = TTY::Prompt.new
     bool = search_again.yes?('Would you like to search again?')
-
-    bool ? get_input_and_search_api : Cli.main_menu
-
+    if bool
+      Cli.clear
+      get_input_and_search_api
+    else
+      Cli.clear
+      Cli.main_menu
+    end
   end
 
 end
