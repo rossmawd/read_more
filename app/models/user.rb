@@ -247,7 +247,8 @@ class User < ActiveRecord::Base
       sleep 0.5
       Cli.line
     end
-    answer = prompt.ask('Which book number would you like to edit?')
+    answer = prompt.ask('Which book number would you like to edit?', convet: :int)
+    answer = answer.to_i
     Cli.line
     if answer == "exit"
       Cli.exit
@@ -506,7 +507,7 @@ class User < ActiveRecord::Base
       end
     else
       puts "You do not own this book!"
-      Cli.main_menu 
+      Cli.main_menu
     end
   end
 
