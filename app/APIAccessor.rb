@@ -95,7 +95,7 @@ class ApiAccessor < ActiveRecord::Base
 
   #The user then chooses the one they want to enter into their database:
   def self.book_choice
-    puts "Please enter a book\'s number to enter it into your library: (or type 'quit' to go back) "
+    puts "Please enter a book\'s number to add it into your library: (or type 'quit' to go back) "
     choice = gets.chomp
     #binding.pry
     if choice == "quit" 
