@@ -167,9 +167,13 @@ class ApiAccessor < ActiveRecord::Base
 
     search_again = TTY::Prompt.new
     bool = search_again.yes?('Would you like to search again?')
-
-    bool ? get_input_and_search_api : Cli.main_menu
-
+    if bool
+      Cli.clear
+      get_input_and_search_api
+    else
+      Cli.clear
+      Cli.main_menu
+    end
   end
 
 end
