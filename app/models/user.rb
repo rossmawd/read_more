@@ -40,6 +40,8 @@ class User < ActiveRecord::Base
   def my_books_list
     # Called from MAIN_MENU and BORROWED_BOOKS_INNER_MENU
     pastel = Pastel.new
+    puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
+    line
     counter = 0
     while self.books.length > counter
       puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
@@ -78,20 +80,23 @@ class User < ActiveRecord::Base
 
   def my_borrowed_books_list
     # Called from MAIN_MENU and OWN_BOOKS_INNER_MENU
+    pastel = Pastel.new
+    puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
+    line
     counter = 0
     while self.borrowed_books.length > counter
-      puts "Book #{counter + 1}
-      Title: #{self.borrowed_books[counter].name}
-      Author: #{self.borrowed_books[counter].author}
-      Synopsis: #{self.borrowed_books[counter].synopsis}
-      Genre: #{self.borrowed_books[counter].genre}
-      ISBN Number: #{self.borrowed_books[counter].isbn_13}
-      Read Status: #{self.borrowed_book_reviews[counter].read_status}
-      Current Page Number: #{self.borrowed_book_reviews[counter].page_number}
-      My Rating: #{self.borrowed_book_reviews[counter].rating}
-      My Review: #{self.borrowed_book_reviews[counter].review}
-      Current Location: #{self.borrowed_book_reviews[counter].possession}
-      Book Owner: #{borrowed_book_reviews[counter].user.first_name}\n"
+      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
+      pastel.cyan("Title: ") + "#{self.borrowed_books[counter].name}\n" +
+      pastel.cyan("Author: ") + "#{self.borrowed_books[counter].author}\n" +
+      pastel.cyan("Synopsis: ") + "#{self.borrowed_books[counter].synopsis}\n" +
+      pastel.cyan("Genre: ") + "#{self.borrowed_books[counter].genre}\n" +
+      pastel.cyan("ISBN Number: ") + "#{self.borrowed_books[counter].isbn_13}\n" +
+      pastel.cyan("Read Status: ") + "#{self.borrowed_book_reviews[counter].read_status}\n" +
+      pastel.cyan("Current Page Number: ") + "#{self.borrowed_book_reviews[counter].page_number}\n" +
+      pastel.cyan("My Rating: ") + "#{self.borrowed_book_reviews[counter].rating}\n" +
+      pastel.cyan("My Review: ") + "#{self.borrowed_book_reviews[counter].review}\n" +
+      pastel.cyan("Current Location: ") + "#{self.borrowed_book_reviews[counter].possession}\n" +
+      pastel.cyan("Book Owner: ") + "#{borrowed_book_reviews[counter].user.first_name}\n"
       counter += 1
     end
     sleep 1

@@ -12,7 +12,7 @@ bookcase
 puts "Hello and welcome to your bookcase!"
 line
 sleep 1
-puts "\"#{$quotes.sample}\""
+puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
 sleep 0.5
 line
 puts "Lets get started: "
