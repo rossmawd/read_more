@@ -193,7 +193,8 @@ end
 def account_page
   # Called from MAIN_MENU
   prompt = TTY::Prompt.new
-  puts $quotes.sample
+  pastel = Pastel.new
+  puts pastel.decorate("\"#{$quotes.sample}\"", :cyan, :bold)
   line
   puts "Hello #{self.user_name}\n"
   line
