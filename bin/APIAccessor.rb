@@ -106,6 +106,17 @@ def add_new_book_from_api(book_choice, user_id, api_result)
       author: check_if_authors_key_exists(index, api_result), 
       isbn_13: find_isbn_13(index, api_result)
       )
+    
+    # User_Book.create(
+    #   review: ""
+    #   rating: 
+    #   page_number:
+    #   read_status:
+    #   book_id: #How do I get this?
+    #   user_id: user_id
+    #   possession: 
+      
+    # )
       puts "'#{api_result["items"][index]["volumeInfo"]["title"]}' has been saved to your Library!" 
   else
     puts "You already own this book! Please select a new one!" #NEED TO LOOP!
@@ -130,12 +141,17 @@ def get_input_and_search_api
   display_three_books(i=0, book_search_results)
   book_choice_menu(book_search_results)
   add_new_book_from_api(book_choice,3, book_search_results)
-  Cli.add_new_book_menu
+
+  search_again = TTY::Prompt.new
+  bool = search_again.yes?('Would you like to search again?')
+
+  bool ? get_input_and_search_api : Cli.main_menu
 
 end
 
+######################### MANUAL CALL TO BE REMOVED
 get_input_and_search_api
-
+###################################
 
 
  
