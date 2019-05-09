@@ -21,9 +21,9 @@ class User < ActiveRecord::Base
     if password == self.password
       puts "Welcome Back!"
       user = self
-      cli.main_menu
+      Cli.main_menu
     else
-      cli.line
+      Cli.line
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
         a.choice 'Back to the Start Menu'
@@ -31,8 +31,8 @@ class User < ActiveRecord::Base
       if choice == 'Try Again'
         check_password
       elsif choice == 'Back to the Start Menu'
-        cli.line
-        cli.start_menu
+        Cli.line
+        Cli.start_menu
       end
     end
   end
@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
   def add_a_new_book_manually
     # Called from ADD_NEW_BOOK_MENU
     prompt = TTY::Prompt.new
-    Cli.quote
+    Cli.quotation
     Cli.line
     sleep 0.5
 
@@ -190,9 +190,10 @@ class User < ActiveRecord::Base
       counter += 1
     end
     answer = prompt.ask('Which book number would you like to edit?', convert: :int)
-    if answer == exit
+    if answer == "exit"
       exit
     else
+      puts "You want to edit book number #{answer}"
       book = self.books[answer-1]
       review = self.reviews[answer-1]
       update_book(book, review, answer)
@@ -297,7 +298,7 @@ class User < ActiveRecord::Base
         self.last_name = c2
       when 'E-Mail'
         c3 = prompt.ask('Enter your new e-mail address: '){|q| q.validate :email}
-        self.e_mail = c3
+        self.email = c3
       when 'Age'
         c4 = prompt.ask('Enter your new age: ')
         self.age = c4
@@ -308,12 +309,12 @@ class User < ActiveRecord::Base
     sleep 0.5
     puts "Your new details are: \n
     Name: #{self.first_name} #{self.last_name}
-    E-Mail: #{self.e_mail}
+    E-Mail: #{self.email}
     Age: #{self.age}\n"
     correct = prompt.yes?('Are these details now correct?') do |q|
       q.suffix 'Yes/No'
     end
-    if correct == "Yes"
+    if correct == true
       Cli.personal_details_inner_menu
     else update_personal_details
     end
@@ -327,6 +328,7 @@ class User < ActiveRecord::Base
       new_password = prompt.mask('🔐   Please enter your NEW password: ')
       update_password(new_password)
       puts "Great! That has been updated!"
+      Cli.main_menu
     else
       choice = prompt.select("Sorry, That password does not match our records. Would you like to try again?") do |a|
         a.choice 'Try Again'
