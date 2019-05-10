@@ -250,13 +250,13 @@ class User < ActiveRecord::Base
       Cli.line
     end
     puts pastel.red("Select the book number you would like to edit?")
-    puts "Type 'menu' to goto the 🏠 Main Menu or 'exit' to quit the app"
+    puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
     Cli.line
     answer = prompt.ask("Edit Book Number: ")
     Cli.line
-    if answer == "exit"
+    if answer == "Exit".downcase
       Cli.exit
-    elsif answer == "menu"
+    elsif answer == "Menu".downcase
       Cli.main_menu
     else
       answer = answer.to_i
@@ -553,13 +553,13 @@ class User < ActiveRecord::Base
         Cli.line
       end
       puts pastel.red("Select the book number you would like to borrow: ")
-      puts "Type 'menu' to goto the 🏠 Main Menu or 'exit' to quit the app"
+      puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
       Cli.line
       answer = prompt.ask("Borrow Book Number: ")
       Cli.line
-      if answer == "exit"
+      if answer == "Exit".downcase
         Cli.exit
-      elsif answer == "menu"
+      elsif answer == "Menu".downcase
         Cli.main_menu
       else
         answer = answer.to_i
