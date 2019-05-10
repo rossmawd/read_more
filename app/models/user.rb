@@ -66,6 +66,7 @@ class User < ActiveRecord::Base
         Cli.exit
       end
     else counter = 0
+      review_to_print = User_Book.all.select{|us| us.book.user == self}
       while self.books.length > counter
         puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
         pastel.cyan("Title: ")+"#{self.books[counter].name}\n"+
@@ -73,11 +74,11 @@ class User < ActiveRecord::Base
         pastel.cyan("Synopsis: ")+"#{self.books[counter].synopsis}\n"+
         pastel.cyan("Genre: ")+"#{self.books[counter].genre}\n"+
         pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
-        pastel.cyan("Read Status: ")+"#{self.reviews[counter].read_status}\n"+
-        pastel.cyan("Current Page Number: ")+"#{self.reviews[counter].page_number}\n"+
-        pastel.cyan("My Rating: #{Cli.stars(self.reviews[counter].rating)}\n") +
-        pastel.cyan("My Review: ")+"#{self.reviews[counter].review}\n"+
-        pastel.cyan("Current Location: ")+"#{self.reviews[counter].possession}\n"
+        pastel.cyan("Read Status: ")+"#{review_to_print[counter].read_status}\n"+
+        pastel.cyan("Current Page Number: ")+"#{review_to_print[counter].page_number}\n"+
+        pastel.cyan("My Rating: #{Cli.stars(review_to_print[counter].rating)}\n") +
+        pastel.cyan("My Review: ")+"#{review_to_print[counter].review}\n"+
+        pastel.cyan("Current Location: ")+"#{review_to_print[counter].possession}\n"
         counter += 1
         Cli.line
         sleep 0.2
@@ -187,8 +188,8 @@ class User < ActiveRecord::Base
     end
 
     user = self
-    book = Book.create(name: answers[:book_name], genre: answers[:genre], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
-    review = User_Book.create(user_id: user.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
+    book_to_add = Book.create(name: answers[:book_name], genre: answers[:genre], synopsis: answers[:book_synopsis], author: answers[:book_author], user_id: user.id, isbn_13: answers[:book_isbn])
+    review = User_Book.create(user_id: user.id, book_id: book_to_add.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
     sleep 0.5
     Cli.line
     puts "Great! That book has been added to your library, take a look:"
@@ -231,18 +232,19 @@ class User < ActiveRecord::Base
     Cli.quotation
     Cli.line
     counter = 0
+    review_to_print = User_Book.all.select{|us| us.book.user == self}
     while self.books.length > counter
-      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
-      pastel.cyan("Title: ") + "#{self.books[counter].name}\n" +
-      pastel.cyan("Author: ") + "#{self.books[counter].author}\n" +
-      pastel.cyan("Synopsis: ") + "#{self.books[counter].synopsis}\n" +
-      pastel.cyan("Genre: ") + "#{self.books[counter].genre}\n" +
-      pastel.cyan("ISBN Number: ") + "#{self.books[counter].isbn_13}\n" +
-      pastel.cyan("Read Status: ") + "#{self.reviews[counter].read_status}\n" +
-      pastel.cyan("Current Page Number: ") + "#{self.reviews[counter].page_number}\n" +
-      pastel.cyan("My Rating: ") + "#{Cli.stars(self.reviews[counter].rating)}\n" +
-      pastel.cyan("My Review: ") + "#{self.reviews[counter].review}\n" +
-      pastel.cyan("Current Location: ") + "#{self.reviews[counter].possession}\n"
+      puts pastel.decorate("Book #{counter + 1}\n", :red, :bold)+
+      pastel.cyan("Title: ")+"#{self.books[counter].name}\n"+
+      pastel.cyan("Author: ")+"#{self.books[counter].author}\n"+
+      pastel.cyan("Synopsis: ")+"#{self.books[counter].synopsis}\n"+
+      pastel.cyan("Genre: ")+"#{self.books[counter].genre}\n"+
+      pastel.cyan("ISBN Number: ")+"#{self.books[counter].isbn_13}\n"+
+      pastel.cyan("Read Status: ")+"#{review_to_print[counter].read_status}\n"+
+      pastel.cyan("Current Page Number: ")+"#{review_to_print[counter].page_number}\n"+
+      pastel.cyan("My Rating: #{Cli.stars(review_to_print[counter].rating)}\n") +
+      pastel.cyan("My Review: ")+"#{review_to_print[counter].review}\n"+
+      pastel.cyan("Current Location: ")+"#{review_to_print[counter].possession}\n"
       counter += 1
       sleep 0.5
       Cli.line
@@ -258,10 +260,10 @@ class User < ActiveRecord::Base
       Cli.main_menu
     else
       answer = answer.to_i
-    end
-    if answer > 0
-      confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
-        q.suffix'Yes/No'
+      if answer >= 1
+        confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
+          q.suffix'Yes/No'
+        end
         if confirmation == true
           Cli.line
           book = self.books[answer-1]
@@ -272,11 +274,11 @@ class User < ActiveRecord::Base
           Cli.line
           select_book_to_edit
         end
+      else
+        puts pastel.cyan("You didn't enter a book number, lets try that again: ")
+        sleep 2
+        select_book_to_edit
       end
-    else
-      puts pastel.cyan("You didn't enter a book number, lets try that again: ")
-      sleep 2
-      select_book_to_edit
     end
   end
 
@@ -348,16 +350,17 @@ class User < ActiveRecord::Base
     Cli.line
     puts pastel.cyan("📚  Your book has been updated!")
     Cli.line
+    review_to_print = User_Book.all.select{|us| us.book.user == self}
     puts pastel.cyan("Title: ") + "#{self.books[locator].name}\n" +
     pastel.cyan("Author: ") + "#{self.books[locator].author}\n" +
     pastel.cyan("Synopsis: ") + "#{self.books[locator].synopsis}\n" +
     pastel.cyan("Genre: ") + "#{self.books[locator].genre}\n" +
     pastel.cyan("ISBN Number: ") + "#{self.books[locator].isbn_13}\n" +
-    pastel.cyan("Read Status: ") + "#{self.reviews[locator].read_status}\n" +
-    pastel.cyan("Current Page Number: ") + "#{self.reviews[locator].page_number}\n" +
-    pastel.cyan("My Rating: ") + "#{Cli.stars(self.reviews[locator].rating)}\n" +
-    pastel.cyan("My Review: ") + "#{self.reviews[locator].review}\n" +
-    pastel.cyan("Current Location: ") + "#{self.reviews[locator].possession}\n"
+    pastel.cyan("Read Status: ") + "#{self.review_to_print[locator].read_status}\n" +
+    pastel.cyan("Current Page Number: ") + "#{self.review_to_print[locator].page_number}\n" +
+    pastel.cyan("My Rating: ") + "#{Cli.stars(self.review_to_print[locator].rating)}\n" +
+    pastel.cyan("My Review: ") + "#{self.review_to_print[locator].review}\n" +
+    pastel.cyan("Current Location: ") + "#{self.review_to_print[locator].possession}\n"
 
     sleep 0.5
     Cli.line
