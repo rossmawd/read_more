@@ -16,7 +16,7 @@ class Cli < ActiveRecord::Base
       |~~|===|--|===|~|~~|%%|~~~|--|:::|=|~|----|==|---|=|
       ^--^---'--^---^-^--^--^---'--^---^-^-^-==-^--^---^-'
     "
-    
+
   end
   ###################
   def self.clear
@@ -273,6 +273,7 @@ class Cli < ActiveRecord::Base
     selection = prompt.select("📚   Great, lets add a new book! How would you like to add the book?") do |a|
       a.choice '📚  Add Manually'
       a.choice '📚  Search and Add'
+      a.choice '📚  Borrow a Book'
       a.choice '🏠  Main Menu'
       a.choice ''
       a.choice '❌  Exit'
@@ -282,6 +283,8 @@ class Cli < ActiveRecord::Base
       $current_user.add_a_new_book_manually
     when '📚  Search and Add'
       ApiAccessor.get_input_and_search_api
+    when '📚  Borrow a Book'
+      find_other_user
     when '🏠  Main Menu'
       main_menu
     when ''
@@ -331,6 +334,37 @@ class Cli < ActiveRecord::Base
     end
   end
   ############################
+  def self.find_other_user
+    clear
+    bookcase
+    quotation
+    line
+    pastel = Pastel.new
+    prompt = TTY::Prompt.new
+    puts pastel.cyan("Yay! Sharing is Caring!!")
+    line
+    puts pastel.cyan("Lets find your friend so we can borrow some books: ")
+    line
+    friend = prompt.ask("What is your friends username?", active_color: :cyan)
+
+    if friend == "exit"
+      main_menu
+    elsif User.find_by(user_name: friend)
+      lender = User.find_by(user_name: friend)
+      lender.lender_books_list
+    else
+      choice = prompt.select("Sorry, I can't find that username. Would you like to try again?") do |a|
+        a.choice 'Try Again'
+        a.choice 'Back to Start Menu'
+      end
+      if choice == 'Try Again'
+        login_account
+      elsif choice == 'Back to Start Menu'
+        start_menu
+      end
+    end
+  end
+  ############################
   def self.exit
     clear
     bookcase
@@ -355,7 +389,6 @@ class Cli < ActiveRecord::Base
     line
     puts " 🏅  #{egg_users.join("\n")}"
   end
-  ############################
   ############################
   def self.top_hunters_page
     pastel = Pastel.new

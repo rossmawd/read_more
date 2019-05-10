@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
     Cli.quotation
     Cli.line
     if self.books.length == 0
-      puts pastel.cyan("😲 Oh No...You don't have any books on your shelf yet.")
+      puts pastel.cyan("😲 Oh No...There are no books the shelf yet.")
       Cli.line
       sleep 1
       selection = prompt.select(" 😀 Add a new book now 😀 \n", active_color: :cyan) do |a|
@@ -169,7 +169,7 @@ class User < ActiveRecord::Base
     sleep 0.3
     puts " Please type your answers below: "
     sleep 0.3
-    Cli:line
+    Cli.line
     answers = prompt.collect do
       key(:book_name).ask('Title: ')
       key(:book_author).ask('Author: ')
@@ -247,12 +247,17 @@ class User < ActiveRecord::Base
       sleep 0.5
       Cli.line
     end
-    answer = prompt.ask('Which book number would you like to edit?', convet: :int)
-    answer = answer.to_i
+    puts pastel.red("Select the book number you would like to edit?")
+    puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
+    Cli.line
+    answer = prompt.ask("Edit Book Number: ")
     Cli.line
     if answer == "exit"
       Cli.exit
-    else
+    elsif answer == "menu"
+      Cli.main_menu
+    elsif answer == 1..100
+      answer = answer.to_i
       confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
         q.suffix'Yes/No'
       end
@@ -266,6 +271,10 @@ class User < ActiveRecord::Base
         Cli.line
         select_book_to_edit
       end
+    else
+      puts pastel.cyan("You didn't enter a book number, lets try that again: ")
+      sleep 2
+      select_book_to_edit
     end
   end
 
@@ -333,19 +342,36 @@ class User < ActiveRecord::Base
   def display_book(locator)
     # Called from UPDATE_BOOK
     prompt = TTY::Prompt.new
-    puts "📚  Your book has been updated!
-    Title: #{self.books[locator].name}
-    Author: #{self.books[locator].author}
-    Synopsis: #{self.books[locator].synopsis}
-    Genre: #{self.books[locator].genre}
-    ISBN Number: #{self.books[locator].isbn_13}
-    Read Status: #{self.reviews[locator].read_status}
-    Current Page Number: #{self.reviews[locator].page_number}
-    My Rating: #{Cli.stars(self.reviews[locator].rating)}
-    My Review: #{self.reviews[locator].review}
-    Current Location: #{self.reviews[locator].possession}\n"
+    pastel = Pastel.new
+    Cli.line
+    puts pastel.cyan("📚  Your book has been updated!")
+    Cli.line
+    puts pastel.cyan("Title: ") + "#{self.books[locator].name}\n" +
+    pastel.cyan("Author: ") + "#{self.books[locator].author}\n" +
+    pastel.cyan("Synopsis: ") + "#{self.books[locator].synopsis}\n" +
+    pastel.cyan("Genre: ") + "#{self.books[locator].genre}\n" +
+    pastel.cyan("ISBN Number: ") + "#{self.books[locator].isbn_13}\n" +
+    pastel.cyan("Read Status: ") + "#{self.reviews[locator].read_status}\n" +
+    pastel.cyan("Current Page Number: ") + "#{self.reviews[locator].page_number}\n" +
+    pastel.cyan("My Rating: ") + "#{Cli.stars(self.reviews[locator].rating)}\n" +
+    pastel.cyan("My Review: ") + "#{self.reviews[locator].review}\n" +
+    pastel.cyan("Current Location: ") + "#{self.reviews[locator].possession}\n"
+
     sleep 0.5
-    Cli.main_menu
+    Cli.line
+    selection = prompt.select("Where to next?", active_color: :cyan) do |a|
+      a.choice '🏠  Main Menu'
+      a.choice ''
+      a.choice '❌  Exit'
+    end
+
+    case selection
+    when '🏠  Main Menu'
+      Cli.main_menu
+    when ''
+    when '❌  Exit'
+      Cli.exit
+    end
   end
   #############################
   def update_personal_details
@@ -482,6 +508,142 @@ class User < ActiveRecord::Base
       users.save
     end
   end
+  ######################################
+  def lender_books_list
+    prompt = TTY::Prompt.new
+    pastel = Pastel.new
+    Cli.clear
+    Cli.bookcase
+    Cli.quotation
+    Cli.line
+    lender = self
+    if self.books.length == 0
+      puts pastel.cyan("😲 Oh No...There are no books the shelf for #{self.user_name} yet.")
+      Cli.line
+      sleep 1
+      selection = prompt.select(" 😀 Come back when they have books to borrow 😀 \n", active_color: :cyan) do |a|
+        a.choice '🏠  Main Menu'
+        a.choice ''
+        a.choice '❌  Exit'
+      end
+      case selection
+      when '🏠  Main Menu'
+        Cli.main_menu
+      when ''
+        Cli.easter_egg
+      when '❌  Exit'
+        Cli.exit
+      end
+    else
+      counter = 0
+      while self.books.length > counter
+        puts pastel.decorate("Book #{counter + 1}\n", :red, :bold) +
+        pastel.cyan("Title: ") + "#{self.books[counter].name}\n" +
+        pastel.cyan("Author: ") + "#{self.books[counter].author}\n" +
+        pastel.cyan("Synopsis: ") + "#{self.books[counter].synopsis}\n" +
+        pastel.cyan("Genre: ") + "#{self.books[counter].genre}\n" +
+        pastel.cyan("ISBN Number: ") + "#{self.books[counter].isbn_13}\n"
+        counter += 1
+        sleep 0.5
+        Cli.line
+      end
+      puts pastel.red("Select the book number you would like to borrow: ")
+      puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
+      Cli.line
+      answer = prompt.ask("Borrow Book Number: ")
+      Cli.line
+      if answer == "exit"
+        Cli.exit
+      elsif answer == "menu"
+        Cli.main_menu
+      else
+        answer = answer.to_i
+      end
+      if answer > 0
+        confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
+          q.suffix'Yes/No'
+        end
+        if confirmation == true
+          Cli.line
+          book = self.books[answer-1]
+          $current_user.add_borrowed_book(book, answer, lender)
+        else
+          puts "Okay, lets try again..."
+          Cli.line
+          lender_books_list
+        end
+      else
+        puts pastel.cyan("You didn't enter a book number, lets try that again: ")
+        sleep 2
+        lender_books_list
+      end
+    end
+  end
+  ####################################
+  def add_borrowed_book(book, answer, lender)
+    pastel = Pastel.new
+    prompt = TTY::Prompt.new(active_color: :cyan)
+    puts "Great, you have borrowed #{book.name} from #{lender.user_name}."
+    Cli.line
+    review_now = prompt.yes?("Would you like to add a review now?") do |q|
+      q.suffix 'Yes/No'
+    end
+    if review_now == true
+      Cli.clear
+      Cli.bookcase
+      Cli.quotation
+      Cli.line
+      puts "Please type your review below: "
+      sleep 0.3
+      Cli.line
+      answers = prompt.collect do
+        key(:read_status).select('Read Status: ', %w(Unopened Completed Reading Abandoned))
+        key(:page_num).ask('Current Page Number: ')
+        key(:rating).slider('Rating: ', max: 5, step: 1, default: 3)
+        key(:review).ask('Review: ')
+        key(:possession).select('Location: Is it on your bookshelf right now or is it somehwere else?') do |a|
+          a.choice 'On The Shelf'
+          a.choice 'Off The Shelf'
+        end
+      end
+      review = User_Book.create(user_id: self.id, book_id: book.id, read_status: answers[:read_status], page_number: answers[:page_num], rating: answers[:rating], review: answers[:review], possession: answers[:possession])
+    else
+      puts "Okay, you can add a review another time."
+      review = User_Book.create(user_id: self.id, book_id: book.id, read_status: "Unopened", page_number: 0, rating: 0, review: "Tbc", possession: "On The Shelf")
+      sleep 0.5
+      Cli.line
+    end
+      puts "Great! That book has been added to your library, take a look:"
+      Cli.line
+      sleep 0.5
+      puts pastel.cyan("Title: ") + "#{book.name}\n" +
+      pastel.cyan("Author: ") + "#{book.author}\n" +
+      pastel.cyan("Synopsis: ") + "#{book.synopsis}\n" +
+      pastel.cyan("Genre: ") + "#{book.genre}\n" +
+      pastel.cyan("ISBN Number: ") + "#{book.isbn_13}\n" +
+      pastel.cyan("Read Status: ") + "#{review[:read_status]}\n" +
+      pastel.cyan("Current Page Number: ") + "#{review[:page_number]}\n" +
+      pastel.cyan("My Rating: ") + "#{Cli.stars(review[:rating])}\n" +
+      pastel.cyan("My Review: ") + "#{review[:review]}\n" +
+      pastel.cyan("Current Location: ") + "#{review[:possession]}\n"
+
+    sleep 0.5
+
+    selection = prompt.select("Where to next?", active_color: :cyan) do |a|
+      a.choice '🏠  Main Menu'
+      a.choice ''
+      a.choice '❌  Exit'
+    end
+
+    case selection
+    when '🏠  Main Menu'
+      Cli.main_menu
+    when ''
+    when '❌  Exit'
+      Cli.exit
+    end
+  end
+  ################################
 
 
   ####Ross's Methods Below!
