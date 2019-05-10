@@ -256,20 +256,22 @@ class User < ActiveRecord::Base
       Cli.exit
     elsif answer == "menu"
       Cli.main_menu
-    elsif answer == 1..100
+    else
       answer = answer.to_i
+    end
+    if answer > 0
       confirmation = prompt.yes?("You selected book number #{answer}, is this correct?") do |q|
         q.suffix'Yes/No'
-      end
-      if confirmation == true
-        Cli.line
-        book = self.books[answer-1]
-        review = self.reviews[answer-1]
-        update_book(book, review, answer)
-      else
-        puts "Okay, lets try again..."
-        Cli.line
-        select_book_to_edit
+        if confirmation == true
+          Cli.line
+          book = self.books[answer-1]
+          review = self.reviews[answer-1]
+          update_book(book, review, answer)
+        else
+          puts "Okay, lets try again..."
+          Cli.line
+          select_book_to_edit
+        end
       end
     else
       puts pastel.cyan("You didn't enter a book number, lets try that again: ")
