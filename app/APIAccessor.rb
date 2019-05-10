@@ -13,7 +13,7 @@ class ApiAccessor < ActiveRecord::Base
       genres == nil ? output = "No Genre found" : output = genres.join(", ")
       output
     end
-    
+
     #HELP
     def self.check_if_url_key_exists(index, api_result)
       url = api_result["items"][index]["volumeInfo"]["previewLink"]
@@ -36,11 +36,11 @@ class ApiAccessor < ActiveRecord::Base
         end
         i +=1
         isbn
-      }  
+      }
       isbn
     end
 
-  # Displays the title, author, publishedDate for the top 3? results  
+  # Displays the title, author, publishedDate for the top 3? results
   def self.display_three_books(i = 0, api_result)
     3.times do
         puts Rainbow("Book #{i+1}").green
@@ -55,7 +55,7 @@ class ApiAccessor < ActiveRecord::Base
         i += 1
     end
   end
- 
+
   #TTY inteface asking the user if they want to choose from 1st 3 books, or see 3 more
   def self.book_choice_menu(api_result)
     menu = TTY::Prompt.new
@@ -68,7 +68,7 @@ class ApiAccessor < ActiveRecord::Base
         a.choice '📚  Search Again'
         a.choice ''
         a.choice '❌  Exit'
-      end  
+      end
       case selection
         when '📚  See the next 3 books'
 
@@ -77,10 +77,10 @@ class ApiAccessor < ActiveRecord::Base
             puts more_than_nine
             if i >= 9 then break end
             display_three_books(i, api_result)
-            
+
             i += 3
           #end
-        
+
         when '📚  Add one of these to your library'
           puts
           #blank as it moves to next method anyway
@@ -99,16 +99,16 @@ class ApiAccessor < ActiveRecord::Base
     puts Rainbow("Please enter a book\'s number to add it into your library: (or type 'quit' to go back)").blue
     choice = gets.chomp
     #binding.pry
-    if choice == "quit" 
-      Cli.main_menu 
-    elsif choice.to_i.class != Integer 
+    if choice == "quit"
+      Cli.main_menu
+    elsif choice.to_i.class != Integer
       puts "Only numbers please !"
       book_choice
     elsif choice.to_i > 9 || choice.to_i < 1
       puts "Choose book by typing number 1 to 9!"
       book_choice
-    else 
-      puts "Sweet!"   #Will break if they don't give a number (1,2,3 etc) 
+    else
+      puts "Sweet!"   #Will break if they don't give a number (1,2,3 etc)
       puts
       choice.to_i
     end
@@ -118,21 +118,23 @@ class ApiAccessor < ActiveRecord::Base
   #Adds book (if not already owned) and creates a User_book instance
   def self.add_new_book_from_api(book_choice, user_id, api_result)
     index = book_choice - 1
-    
+
     if Book.all.find_by(isbn_13: find_isbn_13(index, api_result)) == nil
       book_isbn = find_isbn_13(index, api_result)
-      book = Book.create(
-        name: api_result["items"][index]["volumeInfo"]["title"], 
+
+      Book.create(
+        name: api_result["items"][index]["volumeInfo"]["title"],
         synopsis: api_result["items"][index]["volumeInfo"]["description"],
         genre: check_if_genre_key_exists(index, api_result),
-        user_id: user_id, 
-        author: check_if_authors_key_exists(index, api_result), 
+        user_id: user_id,
+        author: check_if_authors_key_exists(index, api_result),
         isbn_13: find_isbn_13(index, api_result),
         url: check_if_url_key_exists(index, api_result)
         )
-        sleep(1)
+
       ##PROBLEM?! do I need to give empty strings etc or can I set initiate with default values?
-      userb =User_Book.create(
+     
+      User_Book.create(
         review: "",
         rating: 0,
         page_number: 0,
@@ -141,11 +143,11 @@ class ApiAccessor < ActiveRecord::Base
         user_id: user_id,
         possession: "",
        )
-       #binding.pry
-        puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!" 
+
+        puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!"
         puts
     else
-      puts "You already own this book! Please select a new one!" 
+      puts "You already own this book! Please select a new one!"
     end
   end
 
@@ -157,13 +159,15 @@ class ApiAccessor < ActiveRecord::Base
     puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
     puts "-----------------------------------------------------"
     answer = gets.chomp
+
   
     puts 
+
     puts "Thanks! Searching for book... 🔍"
-    puts             
+    puts
 
     result = RestClient.get("https://www.googleapis.com/books/v1/volumes?q=#{answer}")
-     
+
     Cli.clear
     Cli.bookcase
 
@@ -177,7 +181,7 @@ class ApiAccessor < ActiveRecord::Base
 
     search_again = TTY::Prompt.new
     bool = search_again.yes?('Would you like to search again?')
-    
+
     if bool
       Cli.clear
       get_input_and_search_api
@@ -226,12 +230,15 @@ class ApiAccessor < ActiveRecord::Base
   end
 
 
+
 end
  
 
 
-  
- 
+
+
+
+
 
 
 
@@ -242,5 +249,3 @@ end
 #book_choice #Promts the user to make a numerical choice
 
 #add_new_book_from_api(book_choice, 3, api_result)
-
-
