@@ -673,7 +673,8 @@ class User < ActiveRecord::Base
       puts
       Cli.clear
       book_loop = TTY::Prompt.new
-      bool = book_loop.yes?("Are you *sure* you want to delete '#{book_instance.name}'?")
+      print "Are you sure you want to #{Rainbow("delete").red} "
+      bool = book_loop.yes?("'#{book_instance.name}'?")
       if bool
         book_id = book_instance.id
         book_instance.destroy
@@ -686,7 +687,7 @@ class User < ActiveRecord::Base
         Cli.main_menu
       else
         puts
-        #puts Rainbow("Delete Cancelled!").green
+        puts Rainbow("Delete Cancelled!").green
         sleep(2)
         Cli.main_menu
       end
@@ -700,8 +701,9 @@ class User < ActiveRecord::Base
     prompt = TTY::Prompt.new
     counter = 0
     while self.books.length > counter
-      #binding.pry   #BELOW breaks as review == nil
-      puts "Book #{counter + 1}
+      
+      puts Rainbow("Book: ").green + "#{counter + 1}
+      
       # Title: #{self.books[counter].name}
       # Author: #{self.books[counter].author}
       # Synopsis: #{self.books[counter].synopsis}
@@ -713,10 +715,13 @@ class User < ActiveRecord::Base
       # My Review: #{self.reviews[counter].review}
       # Current Location: #{self.reviews[counter].possession}\n"
       counter += 1
+      #binding.pry
     end
     puts "---------------------------------------------------------"
     puts
-    answer = prompt.ask('Which book number would you like to delete?', convert: :int)
+    answer = TTY::Prompt.new(active_color: :cyan)
+    answer = prompt.ask('Which book number would you like to *delete*?', convert: :int)
+    
     book = self.books[answer-1]
     review = self.reviews[answer-1]
     delete_book(book, review)
