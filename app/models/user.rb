@@ -448,7 +448,7 @@ class User < ActiveRecord::Base
         Cli.main_menu
       else
         puts
-        puts Rainbow("Delete Cancelled!").green
+        #puts Rainbow("Delete Cancelled!").green
         sleep(2)
         Cli.main_menu
       end

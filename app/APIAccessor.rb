@@ -121,7 +121,7 @@ class ApiAccessor < ActiveRecord::Base
     
     if Book.all.find_by(isbn_13: find_isbn_13(index, api_result)) == nil
       book_isbn = find_isbn_13(index, api_result)
-      Book.create(
+      book = Book.create(
         name: api_result["items"][index]["volumeInfo"]["title"], 
         synopsis: api_result["items"][index]["volumeInfo"]["description"],
         genre: check_if_genre_key_exists(index, api_result),
@@ -130,16 +130,18 @@ class ApiAccessor < ActiveRecord::Base
         isbn_13: find_isbn_13(index, api_result),
         url: check_if_url_key_exists(index, api_result)
         )
-      
-      User_Book.create(
+        sleep(1)
+      ##PROBLEM?! do I need to give empty strings etc or can I set initiate with default values?
+      userb =User_Book.create(
         review: "",
         rating: 0,
         page_number: 0,
         read_status: "",
-        book_id: Book.all.find_by(isbn_13: book_isbn),
+        book_id: Book.all.find_by(isbn_13: book_isbn.to_i).id,
         user_id: user_id,
         possession: "",
        )
+       #binding.pry
         puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!" 
         puts
     else
@@ -155,7 +157,7 @@ class ApiAccessor < ActiveRecord::Base
     puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
     puts "-----------------------------------------------------"
     answer = gets.chomp
-    #Rainbow("even bright underlined!").underline.bright
+  
     puts 
     puts "Thanks! Searching for book... 🔍"
     puts             
