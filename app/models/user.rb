@@ -295,9 +295,10 @@ class User < ActiveRecord::Base
   def update_book(book, review, answer)
     # Called from SELECT_BOOK_TO_EDIT
     prompt = TTY::Prompt.new(active_color: :cyan)
-    puts "Great, we will be editing #{book.name}"
+    pastel = Pastel.new
+    puts pastel.cyan("Great, we will be editing #{book.name}")
     Cli.line
-    selection = prompt.multi_select("Select all the fields you would like to update: ") do |a|
+    selection = prompt.multi_select("Select all the fields you would like to update: \n Use the 'arrow keys' to move up and down, 'space' to select and 'enter' to continue.") do |a|
       a.choice 'Title'
       a.choice 'Author'
       a.choice 'Synopsis'
@@ -399,7 +400,7 @@ class User < ActiveRecord::Base
     Cli.line
     puts "Lets change things up!"
     Cli.line
-    selection = prompt.multi_select("Select the fields you would like to update: ") do |a|
+    selection = prompt.multi_select("Select the fields you would like to update: \n Use the 'arrow keys' to move up and down, 'space' to select and 'enter' to continue.") do |a|
       a.choice 'First Name'
       a.choice 'Last Name'
       a.choice 'E-Mail'
