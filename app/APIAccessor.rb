@@ -121,7 +121,8 @@ class ApiAccessor < ActiveRecord::Base
 
     if Book.all.find_by(isbn_13: find_isbn_13(index, api_result)) == nil
       book_isbn = find_isbn_13(index, api_result)
-      new book = Book.create(
+
+      Book.create(
         name: api_result["items"][index]["volumeInfo"]["title"],
         synopsis: api_result["items"][index]["volumeInfo"]["description"],
         genre: check_if_genre_key_exists(index, api_result),
@@ -131,15 +132,18 @@ class ApiAccessor < ActiveRecord::Base
         url: check_if_url_key_exists(index, api_result)
         )
 
+      ##PROBLEM?! do I need to give empty strings etc or can I set initiate with default values?
+     
       User_Book.create(
         review: "",
         rating: 0,
         page_number: 0,
         read_status: "",
-        book_id: Book.all.find_by(isbn_13: book_isbn),
+        book_id: Book.all.find_by(isbn_13: book_isbn.to_i).id,
         user_id: user_id,
         possession: "",
        )
+
         puts Rainbow("'#{api_result["items"][index]["volumeInfo"]["title"]}'").green + " has been saved to your Library!"
         puts
     else
@@ -155,8 +159,10 @@ class ApiAccessor < ActiveRecord::Base
     puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
     puts "-----------------------------------------------------"
     answer = gets.chomp
-    #Rainbow("even bright underlined!").underline.bright
-    puts
+
+  
+    puts 
+
     puts "Thanks! Searching for book... 🔍"
     puts
 
@@ -185,7 +191,48 @@ class ApiAccessor < ActiveRecord::Base
     end
   end
 
+    def self.flame_skull
+
+      puts Rainbow("  (
+        .            )        )
+                (  (|              .
+            )   )\/ ( ( (
+    *  (   ((  /     ))\))  (  )    )
+  (     \   )\(          |  ))( )  (|
+  >)     ))/   |          )/  \((  ) \
+  (     (      .        -.     V )/   )(    (
+    \   /     .   \            .       \))   ))
+      )(      (  | |   )            .    (  /
+    )(    ,'))     \ /          \( `.    )
+    (\>  ,'/__      ))            __`.  /
+    ( \   | /  ___   ( \/     ___   \ | ( (
+    \.)  |/  /   \__      __/   \   \|  ))
+    .  \. |>  \      | __ |      /   <|  /
+        )/    \____/ :..: \____/     \ <
+  )   \ (|__  .      / ;: \          __| )  (
+  ((    )\)  ~--_     --  --      _--~    /  ))
+  \    (    |  ||               ||  |   (  /
+        \.  |  ||_             _||  |  /
+          > :  |  ~V+-I_I_I-+V~  |  : (.
+        (  \:  T\   _     _   /T  : ./
+          \  :    T^T T-+-T T^T    ;<
+          \..`_       -+-       _'  )
+  )            . `--=.._____..=--'. ./         (
+  ((     ) (          )             (     ) (   )>
+  > \/^/) )) (   ( /(.      ))     ))._/(__))./ (_.
+  (  _../ ( \))    )   \ (  / \.  ./ ||  ..__:|  _. \
+  |  \__.  ) |   (/  /: :)) |   \/   |(  <.._  )|  ) )
+  ))  _./   |  )  ))  __  <  | :(     :))   .//( :  : |
+  (: <     ):  --:   ^  \  )(   )\/:   /   /_/ ) :._) :
+  \..)   (_..  ..  :    :  : .(   \..:..    ./__.  ./
+          ^    ^      \^ ^           ^\/^     ^ JaL").red
+
+  end
+
+
+
 end
+ 
 
 
 

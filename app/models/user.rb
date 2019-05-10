@@ -497,12 +497,17 @@ class User < ActiveRecord::Base
       if bool
         book_id = book_instance.id
         book_instance.destroy
-        puts "#{book_instance.name} deleted from your Library!"
+        puts
+        ApiAccessor.flame_skull
+        puts "#{book_instance.name}" + Rainbow(" deleted from your Library!").red
         user_book =  review_instance
         user_book.destroy
+        sleep(3)
         Cli.main_menu
       else
-        puts "Delete Cancelled!"
+        puts
+        #puts Rainbow("Delete Cancelled!").green
+        sleep(2)
         Cli.main_menu
       end
     else
