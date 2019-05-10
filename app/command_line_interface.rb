@@ -97,7 +97,7 @@ class Cli < ActiveRecord::Base
       user = User.last
       line
       sleep 0.3
-      puts "Thanks #{self.first_name}, you are all set!"
+      puts "Thanks #{firstname}, you are all set!"
       sleep 2
       main_menu
     else
