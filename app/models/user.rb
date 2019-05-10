@@ -250,7 +250,7 @@ class User < ActiveRecord::Base
       Cli.line
     end
     puts pastel.red("Select the book number you would like to edit?")
-    puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
+    puts "Type 'menu' to goto the 🏠 Main Menu or 'exit' to quit the app"
     Cli.line
     answer = prompt.ask("Edit Book Number: ")
     Cli.line
@@ -553,7 +553,7 @@ class User < ActiveRecord::Base
         Cli.line
       end
       puts pastel.red("Select the book number you would like to borrow: ")
-      puts "Type 'Exit' to leave or 'Menu' to go back to the 🏠 Main Menu"
+      puts "Type 'menu' to goto the 🏠 Main Menu or 'exit' to quit the app"
       Cli.line
       answer = prompt.ask("Borrow Book Number: ")
       Cli.line

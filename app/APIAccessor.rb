@@ -159,7 +159,6 @@ class ApiAccessor < ActiveRecord::Base
     puts Rainbow("Please enter a book title or author name (or both!) 📚").underline.blue
     puts "-----------------------------------------------------"
     answer = gets.chomp
-
   
     puts 
 
