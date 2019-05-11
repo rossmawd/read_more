@@ -719,7 +719,7 @@ class User < ActiveRecord::Base
     end
     puts "---------------------------------------------------------"
     puts
-    answer = TTY::Prompt.new(active_color: :cyan)
+   
     answer = prompt.ask('Which book number would you like to *delete*?', convert: :int)
     
     book = self.books[answer-1]

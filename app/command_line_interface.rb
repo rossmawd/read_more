@@ -146,6 +146,8 @@ class Cli < ActiveRecord::Base
       end
     end
   end
+  
+   
   #################
   def self.main_menu
     clear
